@@ -1,3 +1,7 @@
+"""
+A smart alarm clock presented in a basic web interface.
+"""
+
 from datetime import datetime
 
 
