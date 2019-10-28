@@ -1,4 +1,2 @@
 # smart-alarm-clock
-A smart alarm clock presented in a basic web interface.
-
-This is a test for an editing branch in Git.
+A smart alarm clock presented in a basic web interface, using various APIs to get data on things such as weather and news, and the Flask module to produce the web interface in Python.
