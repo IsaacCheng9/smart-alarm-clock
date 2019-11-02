@@ -15,7 +15,9 @@ def main():
     """
 
     show_time()
-    show_news_weather()
+    show_weather()
+    show_news()
+    set_alarm_clock()
 
 
 def show_time():
@@ -28,9 +30,9 @@ def show_time():
     print("Current Date and Time:\n    ", current_datetime)
 
 
-def show_news_weather():
+def show_weather():
     """
-    Shows the news and weather for the user's chosen city.
+    Shows a weather forecast summary for the user's city.
     """
 
     # Gets the API for weather data on user's city.
@@ -54,6 +56,12 @@ def show_news_weather():
           "°C.\n    Temperature highs of", max_temp + "°C and lows of",
           min_temp + "°C.\n    Wind speeds of", wind, "km/h.")
 
+
+def show_news():
+    """
+    Shows the world news headlines.
+    """
+
     # Gets latest news using the news API.
     news_api = ("https://newsapi.org/v2/top-headlines?"
                 "country=us&apiKey=86a97a39f14a4a1eac894868d7b9726c")
@@ -62,11 +70,21 @@ def show_news_weather():
     raw_news = requests.get(news_api)
     news = raw_news.json()
 
-    # Prints the ten news headlines.
+    # Prints the top ten world news headlines.
     print("\nNews Headlines for Today:")
     for i in range(10):
         articles = str(news["articles"][i]["title"])
         print("    #" + str(i + 1), articles)
+
+
+def set_alarm_clock():
+    """
+    Asks the user if they want to set an alarm.
+    """
+
+    set_alarm = input("\nWould you like to set a new alarm? (y/n) ").lower()
+    if set_alarm == "y":
+        alarm = input("What time would you like to set an alarm for? (HH:MM) ")
 
 
 # Prevents the code from executing when the script is imported as a module.
