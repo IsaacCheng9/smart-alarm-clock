@@ -2,9 +2,12 @@
 A smart alarm clock presented in a basic web interface.
 """
 
+import json
+import sched
+import time
 from collections import OrderedDict
 from datetime import datetime
-import json
+
 import requests
 
 
@@ -77,6 +80,14 @@ def show_news():
         print("    #" + str(i + 1), articles)
 
 
+def alarm_alert():
+    """
+    Alerts the user when their alarm is going off.
+    """
+
+    print("Your alarm is going off!")
+
+
 def set_alarm_clock():
     """
     Asks the user if they want to set an alarm.
@@ -84,7 +95,13 @@ def set_alarm_clock():
 
     set_alarm = input("\nWould you like to set a new alarm? (y/n) ").lower()
     if set_alarm == "y":
-        alarm = input("What time would you like to set an alarm for? (HH:MM) ")
+        alarm_time = datetime.strptime(input("What time would you like to set "
+                                             "an alarm for? (HH:MM) "),
+                                       "%H:%M").time()
+
+    alarm = sched.scheduler(time.time)
+    alarm.enterabs(alarm_time, 1, alarm_alert)
+    alarm.run()
 
 
 # Prevents the code from executing when the script is imported as a module.
