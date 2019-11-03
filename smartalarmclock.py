@@ -6,11 +6,16 @@ import json
 import sched
 import time
 from collections import OrderedDict
-from datetime import datetime, date, timedelta
+from datetime import date, datetime, timedelta
+from flask import Flask, render_template
 
 import requests
 
 
+app = Flask(__name__)
+
+
+@app.route("/")
 def main():
     """
     Shows the current time, the latest news headlines, and a weather forecast
@@ -21,6 +26,8 @@ def main():
     show_weather()
     show_news()
     set_alarm_clock()
+
+    return render_template("home.html")
 
 
 def show_time():
@@ -111,4 +118,4 @@ def set_alarm_clock():
 
 # Prevents the code from executing when the script is imported as a module.
 if __name__ == "__main__":
-    main()
+    app.run(debug=True)
