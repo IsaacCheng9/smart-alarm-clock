@@ -6,7 +6,7 @@ import json
 import sched
 import time
 from collections import OrderedDict
-from datetime import datetime
+from datetime import datetime, date, timedelta
 
 import requests
 
@@ -85,7 +85,7 @@ def alarm_alert():
     Alerts the user when their alarm is going off.
     """
 
-    print("Your alarm is going off!")
+    print("\nYour alarm is going off!")
 
 
 def set_alarm_clock():
@@ -93,15 +93,20 @@ def set_alarm_clock():
     Asks the user if they want to set an alarm.
     """
 
+    # Sets time for new alarm.
     set_alarm = input("\nWould you like to set a new alarm? (y/n) ").lower()
     if set_alarm == "y":
         alarm_time = datetime.strptime(input("What time would you like to set "
                                              "an alarm for? (HH:MM) "),
                                        "%H:%M").time()
+        now = datetime.now().time()
 
-    alarm = sched.scheduler(time.time)
-    alarm.enterabs(alarm_time, 1, alarm_alert)
-    alarm.run()
+        # Calculates delay for alarm to go off, then puts alarm on standby.
+        delay = (datetime.combine(date.min, alarm_time) -
+                 datetime.combine(date.min, now)).total_seconds()
+        alarm = sched.scheduler(time.time, time.sleep)
+        alarm.enter(delay, 1, alarm_alert)
+        alarm.run()
 
 
 # Prevents the code from executing when the script is imported as a module.
