@@ -5,17 +5,16 @@ A smart alarm clock presented in a basic web interface.
 import json
 import sched
 import time
-from collections import OrderedDict
 from datetime import date, datetime, timedelta
+
+import pyttsx3
+import requests
 from flask import Flask, render_template
 
-import requests
+#app = Flask(__name__)
 
 
-app = Flask(__name__)
-
-
-@app.route("/")
+#@app.route("/")
 def main():
     """
     Shows the current time, the latest news headlines, and a weather forecast
@@ -27,7 +26,7 @@ def main():
     show_news()
     set_alarm_clock()
 
-    return render_template("home.html")
+    #return render_template("home.html")
 
 
 def show_time():
@@ -92,7 +91,10 @@ def alarm_alert():
     Alerts the user when their alarm is going off.
     """
 
+    text_to_speech = pyttsx3.init()
+    text_to_speech.say("Your alarm is going off!")
     print("\nYour alarm is going off!")
+    text_to_speech.runAndWait()
 
 
 def set_alarm_clock():
@@ -118,4 +120,5 @@ def set_alarm_clock():
 
 # Prevents the code from executing when the script is imported as a module.
 if __name__ == "__main__":
-    app.run(debug=True)
+    main()
+    #app.run(debug=True)
