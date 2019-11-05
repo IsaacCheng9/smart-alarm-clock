@@ -73,7 +73,7 @@ def show_news():
 
     # Gets latest news using the news API.
     news_api = ("https://newsapi.org/v2/top-headlines?"
-                "country=us&apiKey=86a97a39f14a4a1eac894868d7b9726c")
+                "country=gb&apiKey=86a97a39f14a4a1eac894868d7b9726c")
 
     # Gets news using the news API.
     raw_news = requests.get(news_api)
