@@ -11,22 +11,21 @@ import pyttsx3
 import requests
 from flask import Flask, render_template
 
-#app = Flask(__name__)
+app = Flask(__name__)
 
 
-#@app.route("/")
+@app.route("/")
 def main():
     """
     Shows the current time, the latest news headlines, and a weather forecast
     summary.
     """
 
+    return render_template("home.html")
     show_time()
     show_weather()
     show_news()
     set_alarm_clock()
-
-    #return render_template("home.html")
 
 
 def show_time():
@@ -120,5 +119,5 @@ def set_alarm_clock():
 
 # Prevents the code from executing when the script is imported as a module.
 if __name__ == "__main__":
-    main()
-    #app.run(debug=True)
+    #main()
+    app.run(debug=True)
