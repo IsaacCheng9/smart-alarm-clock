@@ -21,10 +21,10 @@ def main():
     summary.
     """
 
-    return render_template("home.html")
     show_time()
     show_weather()
     show_news()
+    return render_template("home.html")
     set_alarm_clock()
 
 
@@ -119,5 +119,5 @@ def set_alarm_clock():
 
 # Prevents the code from executing when the script is imported as a module.
 if __name__ == "__main__":
-    #main()
+    # main()
     app.run(debug=True)
