@@ -24,7 +24,8 @@ def main():
     show_time()
     show_weather()
     show_news()
-    return render_template("home.html")
+    return render_template("home.html", forecast=forecast, temp=temp,
+                           max_temp=max_temp, min_temp=min_temp, wind=wind)
     set_alarm_clock()
 
 
@@ -44,10 +45,12 @@ def show_weather():
     """
 
     # Gets the API for weather data on user's city.
-    city = input("\nPlease enter your city. ").capitalize()
-    weather_api = ("https://api.openweathermap.org/data/2.5/weather?"
+    """weather_api = ("https://api.openweathermap.org/data/2.5/weather?"
                    "q={}&appid=8bb8c8c3507631f11bb9599e7795a718"
-                   "&units=metric").format(city)
+                   "&units=metric").format(city)"""
+    weather_api = ("https://api.openweathermap.org/data/2.5/weather?"
+                   "q=exeter&appid=8bb8c8c3507631f11bb9599e7795a718"
+                   "&units=metric")
 
     # Gets weather data using the weather API.
     raw_weather = requests.get(weather_api)
@@ -63,6 +66,8 @@ def show_weather():
           "with an average temperature of", temp +
           "°C.\n    Temperature highs of", max_temp + "°C and lows of",
           min_temp + "°C.\n    Wind speeds of", wind, "km/h.")
+
+    return forecast, temp, max_temp, min_temp, wind
 
 
 def show_news():
@@ -119,5 +124,4 @@ def set_alarm_clock():
 
 # Prevents the code from executing when the script is imported as a module.
 if __name__ == "__main__":
-    # main()
     app.run(debug=True)
