@@ -9,7 +9,7 @@ from datetime import date, datetime, timedelta
 
 import pyttsx3
 import requests
-from flask import Flask, render_template
+from flask import Flask, request, render_template
 
 app = Flask(__name__)
 
@@ -22,7 +22,7 @@ def main():
     """
 
     show_time()
-    show_weather()
+    forecast, temp, max_temp, min_temp, wind = show_weather()
     show_news()
     return render_template("home.html", forecast=forecast, temp=temp,
                            max_temp=max_temp, min_temp=min_temp, wind=wind)
@@ -65,7 +65,7 @@ def show_weather():
     print("\nWeather Forecast:\n    " + forecast,
           "with an average temperature of", temp +
           "°C.\n    Temperature highs of", max_temp + "°C and lows of",
-          min_temp + "°C.\n    Wind speeds of", wind, "km/h.")
+          min_temp + "°C.\n    Wind speeds of", wind, "m/s.")
 
     return forecast, temp, max_temp, min_temp, wind
 
@@ -106,7 +106,7 @@ def set_alarm_clock():
     Asks the user if they want to set an alarm.
     """
 
-    # Sets time for new alarm.
+    """# Sets time for new alarm.
     set_alarm = input("\nWould you like to set a new alarm? (y/n) ").lower()
     if set_alarm == "y":
         alarm_time = datetime.strptime(input("What time would you like to set "
@@ -119,9 +119,18 @@ def set_alarm_clock():
                  datetime.combine(date.min, now)).total_seconds()
         alarm = sched.scheduler(time.time)
         alarm.enter(delay, 1, alarm_alert)
-        alarm.run()
+        alarm.run()"""
+
+    # Calculates delay for alarm to go off, then puts alarm on standby.
+    delay = (datetime.combine(date.min, alarm_time) -
+                datetime.combine(date.min, now)).total_seconds()
+    alarm = sched.scheduler(time.time)
+    alarm.enter(delay, 1, alarm_alert)
+    alarm.run
+    alarm_input = request.args.get("alarm")
 
 
 # Prevents the code from executing when the script is imported as a module.
 if __name__ == "__main__":
+    # main()
     app.run(debug=True)
