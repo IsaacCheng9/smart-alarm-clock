@@ -121,9 +121,12 @@ def set_alarm_clock():
         alarm.enter(delay, 1, alarm_alert)
         alarm.run()"""
 
+    alarm_time = request.args.get("alarm")
+    now = datetime.now().time()
+
     # Calculates delay for alarm to go off, then puts alarm on standby.
     delay = (datetime.combine(date.min, alarm_time) -
-                datetime.combine(date.min, now)).total_seconds()
+             datetime.combine(date.min, now)).total_seconds()
     alarm = sched.scheduler(time.time)
     alarm.enter(delay, 1, alarm_alert)
     alarm.run
