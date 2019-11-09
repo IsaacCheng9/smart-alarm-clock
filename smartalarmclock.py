@@ -44,9 +44,11 @@ def parse_configs():
     """
     Gets the API keys from the JSON config file.
     """
-    with open("api_keys.json", "r") as file:
-        api_file = json.load(file)
-    keys = api_file["api_keys"]
+
+    # Loads the config file and finds the API keys.
+    with open("config.json", "r") as file:
+        config = json.load(file)
+    keys = config["api_keys"]
 
     return keys
 
