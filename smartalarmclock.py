@@ -120,21 +120,6 @@ def set_alarm_clock():
     Asks the user if they want to set an alarm.
     """
 
-    """# Sets time for new alarm.
-    set_alarm = input("\nWould you like to set a new alarm? (y/n) ").lower()
-    if set_alarm == "y":
-        alarm_time = datetime.strptime(input("What time would you like to set "
-                                             "an alarm for? (HH:MM) "),
-                                       "%H:%M").time()
-        now = datetime.now().time()
-
-        # Calculates delay for alarm to go off, then puts alarm on standby.
-        delay = (datetime.combine(date.min, alarm_time) -
-                 datetime.combine(date.min, now)).total_seconds()
-        alarm = sched.scheduler(time.time)
-        alarm.enter(delay, 1, alarm_alert)
-        alarm.run()"""
-
     alarm_time = request.args.get("alarm")
     now = time()
     print(time)
@@ -144,7 +129,7 @@ def set_alarm_clock():
              datetime.combine(date.min, now)).total_seconds()
     alarm = sched.scheduler(time.time)
     alarm.enter(delay, 1, alarm_alert)
-    alarm.run
+    alarm.run()
     alarm_input = request.args.get("alarm")
 
 
