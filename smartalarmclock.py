@@ -39,6 +39,15 @@ def show_time():
     print("Current Date and Time:\n    ", current_datetime)
 
 
+def parse_configs():
+    """
+    Gets the API keys from the JSON config file.
+    """
+    with open("api_keys.json", "r") as file:
+        api_keys = json.load(file)
+    keys = api_keys["API keys"]
+
+
 def show_weather():
     """
     Shows a weather forecast summary for the user's city.
@@ -122,7 +131,8 @@ def set_alarm_clock():
         alarm.run()"""
 
     alarm_time = request.args.get("alarm")
-    now = datetime.now().time()
+    now = time()
+    print(time)
 
     # Calculates delay for alarm to go off, then puts alarm on standby.
     delay = (datetime.combine(date.min, alarm_time) -
@@ -135,5 +145,4 @@ def set_alarm_clock():
 
 # Prevents the code from executing when the script is imported as a module.
 if __name__ == "__main__":
-    # main()
     app.run(debug=True)
