@@ -22,8 +22,9 @@ def main():
     """
 
     show_time()
-    forecast, temp, max_temp, min_temp, wind = show_weather()
-    show_news()
+    keys = parse_configs()
+    forecast, temp, max_temp, min_temp, wind = show_weather(keys)
+    show_news(keys)
     return render_template("home.html", forecast=forecast, temp=temp,
                            max_temp=max_temp, min_temp=min_temp, wind=wind)
     set_alarm_clock()
@@ -44,11 +45,13 @@ def parse_configs():
     Gets the API keys from the JSON config file.
     """
     with open("api_keys.json", "r") as file:
-        api_keys = json.load(file)
-    keys = api_keys["API keys"]
+        api_file = json.load(file)
+    keys = api_file["api_keys"]
+
+    return keys
 
 
-def show_weather():
+def show_weather(keys):
     """
     Shows a weather forecast summary for the user's city.
     """
@@ -57,9 +60,10 @@ def show_weather():
     """weather_api = ("https://api.openweathermap.org/data/2.5/weather?"
                    "q={}&appid=8bb8c8c3507631f11bb9599e7795a718"
                    "&units=metric").format(city)"""
+    weather_key = keys["weather"]
     weather_api = ("https://api.openweathermap.org/data/2.5/weather?"
                    "q=exeter&appid=8bb8c8c3507631f11bb9599e7795a718"
-                   "&units=metric")
+                   "&units=metric").format(weather_key)
 
     # Gets weather data using the weather API.
     raw_weather = requests.get(weather_api)
@@ -79,14 +83,15 @@ def show_weather():
     return forecast, temp, max_temp, min_temp, wind
 
 
-def show_news():
+def show_news(keys):
     """
     Shows the world news headlines.
     """
 
     # Gets latest news using the news API.
+    news_key = keys["news"]
     news_api = ("https://newsapi.org/v2/top-headlines?"
-                "country=gb&apiKey=86a97a39f14a4a1eac894868d7b9726c")
+                "country=gb&apiKey={}").format(news_key)
 
     # Gets news using the news API.
     raw_news = requests.get(news_api)

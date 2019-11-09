@@ -3,13 +3,17 @@
     <head>
         <title>Smart Alarm Clock</title>
     </head>
+    
     <h1>Smart Alarm Clock</h1>
 
     <h2>Current Weather</h2>
-    <body>{{ forecast }} with an average temperature of {{ temp }} °C, with highs of {{max_temp }} °C and lows of {{ min_temp}} °C. <br>Wind speeds of {{ wind }} m/s.</body>
+        <body>
+            <p>{{ forecast }} with an average temperature of {{ temp }} °C.<br>Highs of {{max_temp }} °C and lows of {{ min_temp}} °C.<br>Wind speeds of {{ wind }} m/s.</p>
+        </body>
 
     <h2>Headlines for Today</h2>
 
+    <h2>Create New Alarm</h2>
     <form action="/" method="get">
         <input type="datetime-local" name="alarm">
         <input type="submit">
