@@ -1,2 +1,2 @@
 # smart-alarm-clock
-A smart alarm clock presented in a basic web interface, using various APIs to get data on things such as weather and news, and the Flask module to produce the web interface in Python.
+A smart alarm clock presented in a basic web interface, created using the Flask module in Python. The user is able to read updated weather and news information, and set alarms for the future.
