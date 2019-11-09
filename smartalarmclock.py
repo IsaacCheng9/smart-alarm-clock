@@ -4,8 +4,8 @@ A smart alarm clock presented in a basic web interface.
 
 import json
 import sched
-import time
 from datetime import date, datetime, timedelta
+from time import mktime, time
 
 import pyttsx3
 import requests
@@ -122,17 +122,16 @@ def set_alarm_clock():
     Asks the user if they want to set an alarm.
     """
 
+    # Gets the alarm time from the new alarm input box and calculates delay.
     alarm_time = request.args.get("alarm")
-    now = time()
-    print(time)
+    format_time = datetime.strptime(alarm_time, "%Y-%m-%dT%H:%M")
+    alarm_time = mktime(alarm_time.timetuple())
+    delay = alarm_time - time()
 
-    # Calculates delay for alarm to go off, then puts alarm on standby.
-    delay = (datetime.combine(date.min, alarm_time) -
-             datetime.combine(date.min, now)).total_seconds()
+    # Activates new alarm.
     alarm = sched.scheduler(time.time)
     alarm.enter(delay, 1, alarm_alert)
     alarm.run()
-    alarm_input = request.args.get("alarm")
 
 
 # Prevents the code from executing when the script is imported as a module.
