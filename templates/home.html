@@ -44,6 +44,12 @@
 </p>
 
 <h3>Current Alarms</h3>
+{{ current_alarms }}
 
-<a href=/setalarm>Set a New Alarm</a> <br>
-    <a href=/cancelalarm>Cancel an Alarm</a> </html>
+<h3>Set an Alarm</h3>
+<form action="/" method="get">
+    <input type="datetime-local" name="alarm">
+    <input type="submit">
+</form>
+<br>
+<a href=/cancelalarm>Cancel an Alarm</a> </html>
