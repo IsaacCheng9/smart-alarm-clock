@@ -21,23 +21,35 @@ def main():
     summary.
     """
 
-    show_time()
+    current_datetime = last_updated()
     keys = parse_configs()
     forecast, temp, max_temp, min_temp, wind = show_weather(keys)
-    show_news(keys)
-    return render_template("home.html", forecast=forecast, temp=temp,
-                           max_temp=max_temp, min_temp=min_temp, wind=wind)
+    (headline1, headline2, headline3, headline4, headline5, headline6,
+     headline7, headline8, headline9, headline10) = show_news(keys)
+    return render_template("home.html", current_datetime=current_datetime,
+                           forecast=forecast, temp=temp,
+                           max_temp=max_temp, min_temp=min_temp, wind=wind,
+                           headline1=headline1, headline2=headline2,
+                           headline3=headline3, headline4=headline4,
+                           headline5=headline5, headline6=headline6,
+                           headline7=headline7, headline8=headline8,
+                           headline9=headline9, headline10=headline10)
     set_alarm_clock()
 
 
-def show_time():
+def last_updated():
     """
-    Displays the current date and time.
+    Displays the date and time of last update.
+
+    Returns:
+        current_datetime (datetime): 
     """
 
     current_datetime = datetime.now().strftime(
         "%Y-%m-%d %H:%M:%S")
-    print("Current Date and Time:\n    ", current_datetime)
+    print("Last Updated:\n    ", current_datetime)
+
+    return current_datetime
 
 
 def parse_configs():
@@ -56,6 +68,16 @@ def parse_configs():
 def show_weather(keys):
     """
     Shows a weather forecast summary for the user's city.
+
+    Args:
+        keys (dict): 
+
+    Returns:
+        forecast
+        temp
+        max_temp
+        min_temp
+        wind
     """
 
     # Gets the API for weather data on user's city.
@@ -88,6 +110,12 @@ def show_weather(keys):
 def show_news(keys):
     """
     Shows the world news headlines.
+
+    Args:
+        keys (dict): 
+
+    Returns:
+        headline# (str): 
     """
 
     # Gets latest news using the news API.
@@ -99,11 +127,26 @@ def show_news(keys):
     raw_news = requests.get(news_api)
     news = raw_news.json()
 
-    # Prints the top ten world news headlines.
+    # Gets and assigns top ten headlines.
+    headline1 = str(news["articles"][0]["title"])
+    headline2 = str(news["articles"][1]["title"])
+    headline3 = str(news["articles"][2]["title"])
+    headline4 = str(news["articles"][3]["title"])
+    headline5 = str(news["articles"][4]["title"])
+    headline6 = str(news["articles"][5]["title"])
+    headline7 = str(news["articles"][6]["title"])
+    headline8 = str(news["articles"][7]["title"])
+    headline9 = str(news["articles"][8]["title"])
+    headline10 = str(news["articles"][9]["title"])
+
+    # Prints the top ten headlines.
     print("\nNews Headlines for Today:")
     for i in range(10):
         articles = str(news["articles"][i]["title"])
-        print("    #" + str(i + 1), articles)
+        print("    #:" + str(i + 1), articles)
+
+    return (headline1, headline2, headline3, headline4, headline5, headline6,
+            headline7, headline8, headline9, headline10)
 
 
 def alarm_alert():
