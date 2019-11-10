@@ -39,7 +39,7 @@ def main():
     set_alarm_clock()
 
 
-def last_updated():
+def last_updated() -> datetime:
     """
     Displays the date and time of last update.
 
@@ -54,7 +54,7 @@ def last_updated():
     return current_datetime
 
 
-def parse_configs():
+def parse_configs() -> dict:
     """
     Gets the API keys from the JSON config file.
 
@@ -70,7 +70,7 @@ def parse_configs():
     return api_keys
 
 
-def get_weather(api_keys: dict):
+def get_weather(api_keys: dict) -> str:
     """
     Gets the weather forecast summary.
 
@@ -112,7 +112,7 @@ def get_weather(api_keys: dict):
     return forecast, temp, max_temp, min_temp, wind
 
 
-def get_news(api_keys: dict):
+def get_news(api_keys: dict) -> str:
     """
     Gets the news headlines.
 
