@@ -1,5 +1,7 @@
 """
-A smart alarm clock presented in a basic web interface.
+A smart alarm clock presented in a basic web interface, created using the
+Flask module in Python. The user is able to read updated weather and news
+information, and set alarms for the future.
 """
 
 import json
@@ -9,7 +11,7 @@ from time import mktime, time
 
 import pyttsx3
 import requests
-from flask import Flask, request, render_template
+from flask import Flask, render_template, request
 
 app = Flask(__name__)
 
@@ -23,9 +25,9 @@ def main():
 
     current_datetime = last_updated()
     keys = parse_configs()
-    forecast, temp, max_temp, min_temp, wind = show_weather(keys)
+    forecast, temp, max_temp, min_temp, wind = get_weather(keys)
     (headline1, headline2, headline3, headline4, headline5, headline6,
-     headline7, headline8, headline9, headline10) = show_news(keys)
+     headline7, headline8, headline9, headline10) = get_news(keys)
     return render_template("home.html", current_datetime=current_datetime,
                            forecast=forecast, temp=temp,
                            max_temp=max_temp, min_temp=min_temp, wind=wind,
@@ -42,7 +44,7 @@ def last_updated():
     Displays the date and time of last update.
 
     Returns:
-        current_datetime (datetime): 
+        current_datetime (datetime): Displays the last time data was updated.
     """
 
     current_datetime = datetime.now().strftime(
@@ -55,36 +57,39 @@ def last_updated():
 def parse_configs():
     """
     Gets the API keys from the JSON config file.
+
+    Returns:
+        api_keys (dict): Stores the API keys for weather and news data.
     """
 
     # Loads the config file and finds the API keys.
     with open("config.json", "r") as file:
         config = json.load(file)
-    keys = config["api_keys"]
+    api_keys = config["api_keys"]
 
-    return keys
+    return api_keys
 
 
-def show_weather(keys):
+def get_weather(api_keys: dict):
     """
-    Shows a weather forecast summary for the user's city.
+    Gets the weather forecast summary.
 
     Args:
-        keys (dict): 
+        api_keys (dict): Stores the API keys for weather and news data.
 
     Returns:
-        forecast
-        temp
-        max_temp
-        min_temp
-        wind
+        forecast (str): Displays type of weather forecast.
+        temp (str): Displays temperature for weather forecast.
+        max_temp (str): Displays maximum temperature for weather forecast.
+        min_temp (str): Displays minimum temperature for weather forecast.
+        wind (str): Displays average wind speed for weather forecast.
     """
 
     # Gets the API for weather data on user's city.
     """weather_api = ("https://api.openweathermap.org/data/2.5/weather?"
                    "q={}&appid=8bb8c8c3507631f11bb9599e7795a718"
                    "&units=metric").format(city)"""
-    weather_key = keys["weather"]
+    weather_key = api_keys["weather"]
     weather_api = ("https://api.openweathermap.org/data/2.5/weather?"
                    "q=exeter&appid=8bb8c8c3507631f11bb9599e7795a718"
                    "&units=metric").format(weather_key)
@@ -107,19 +112,19 @@ def show_weather(keys):
     return forecast, temp, max_temp, min_temp, wind
 
 
-def show_news(keys):
+def get_news(api_keys: dict):
     """
-    Shows the world news headlines.
+    Gets the news headlines.
 
     Args:
-        keys (dict): 
+        api_keys (dict): Stores the API keys for weather and news data.
 
     Returns:
-        headline# (str): 
+        headline# (str): Stores the numbered headline (depending on #).
     """
 
     # Gets latest news using the news API.
-    news_key = keys["news"]
+    news_key = api_keys["news"]
     news_api = ("https://newsapi.org/v2/top-headlines?"
                 "country=gb&apiKey={}").format(news_key)
 
@@ -149,7 +154,7 @@ def show_news(keys):
             headline7, headline8, headline9, headline10)
 
 
-def alarm_alert():
+def alert_alarm():
     """
     Alerts the user when their alarm is going off.
     """
@@ -173,7 +178,7 @@ def set_alarm_clock():
 
     # Activates new alarm.
     alarm = sched.scheduler(time.time)
-    alarm.enter(delay, 1, alarm_alert)
+    alarm.enter(delay, 1, alert_alarm)
     alarm.run()
 
 
