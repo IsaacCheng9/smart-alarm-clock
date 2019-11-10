@@ -1,50 +1,49 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Smart Alarm Clock</title>
-    </head>
-    
-    <h1>Smart Alarm Clock</h1>
-        <body>Last Updated: {{ current_datetime }}</body>
 
-    <h3>Current Weather</h3>
-        <p>
-            {{ forecast }} with an average temperature of {{ temp }} °C.
-            <br>
-            Highs of {{max_temp }} °C and lows of {{ min_temp}} °C.
-            <br>
-            Wind speeds of {{ wind }} m/s.
-        </p>
+<head>
+    <title>Smart Alarm Clock</title>
+</head>
 
-    <h3>Headlines for Today</h3>
-        <p>
-            #1: {{ headline1 }}
-            <br>
-            #2: {{ headline2 }}
-            <br>
-            #3: {{ headline3 }}
-            <br>
-            #4: {{ headline4 }}
-            <br>
-            #5: {{ headline5 }}
-            <br>
-            #6: {{ headline6 }}
-            <br>
-            #7: {{ headline7 }}
-            <br>
-            #8: {{ headline8 }}
-            <br>
-            #9: {{ headline9 }}
-            <br>
-            #10: {{ headline10 }}
-        </p>
+<h1>Smart Alarm Clock</h1>
 
-    <h3>Current Alarms</h3>
+<body>Last Updated: {{ current_datetime }}</body>
 
-    <h3>Create New Alarm</h3>
-    <form action="/" method="get">
-        <input type="datetime-local" name="alarm">
-        <input type="submit">
-    </form>
+<h3>Notifications</h3>
 
-</html>
+<h3>Current Weather</h3>
+<p>
+    {{ forecast }} with an average temperature of {{ temp }} °C.
+    <br>
+    Highs of {{max_temp }} °C and lows of {{ min_temp}} °C.
+    <br>
+    Wind speeds of {{ wind }} m/s.
+</p>
+
+<h3>Headlines for Today</h3>
+<p>
+    #1: {{ headline1 }}
+    <br>
+    #2: {{ headline2 }}
+    <br>
+    #3: {{ headline3 }}
+    <br>
+    #4: {{ headline4 }}
+    <br>
+    #5: {{ headline5 }}
+    <br>
+    #6: {{ headline6 }}
+    <br>
+    #7: {{ headline7 }}
+    <br>
+    #8: {{ headline8 }}
+    <br>
+    #9: {{ headline9 }}
+    <br>
+    #10: {{ headline10 }}
+</p>
+
+<h3>Current Alarms</h3>
+
+<a href=/setalarm>Set a New Alarm</a> <br>
+    <a href=/cancelalarm>Cancel an Alarm</a> </html>
