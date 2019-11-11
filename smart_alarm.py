@@ -7,7 +7,7 @@ information, and set alarms for the future.
 import json
 import sched
 from datetime import date, datetime, timedelta
-from time import mktime, time
+import time
 
 import pyttsx3
 import requests
@@ -28,8 +28,9 @@ def main():
     forecast, temp, max_temp, min_temp, wind = get_weather(keys)
     (headline1, headline2, headline3, headline4, headline5, headline6,
      headline7, headline8, headline9, headline10) = get_news(keys)
-    current_alarms = set_alarm()
-    return render_template("home.html", current_datetime=current_datetime,
+    # current_alarms = set_alarm()
+    set_alarm()
+    """return render_template("home.html", current_datetime=current_datetime,
                            forecast=forecast, temp=temp,
                            max_temp=max_temp, min_temp=min_temp, wind=wind,
                            headline1=headline1, headline2=headline2,
@@ -37,7 +38,15 @@ def main():
                            headline5=headline5, headline6=headline6,
                            headline7=headline7, headline8=headline8,
                            headline9=headline9, headline10=headline10,
-                           current_alarms=current_alarms)
+                           current_alarms=current_alarms)"""
+    return render_template("home.html", current_datetime=current_datetime,
+                           forecast=forecast, temp=temp,
+                           max_temp=max_temp, min_temp=min_temp, wind=wind,
+                           headline1=headline1, headline2=headline2,
+                           headline3=headline3, headline4=headline4,
+                           headline5=headline5, headline6=headline6,
+                           headline7=headline7, headline8=headline8,
+                           headline9=headline9, headline10=headline10)
 
 
 def last_updated() -> datetime:
@@ -160,9 +169,9 @@ def alert_alarm():
     Alerts the user when their alarm is going off.
     """
 
-    #text_to_speech = pyttsx3.init()
-    #text_to_speech.say("Your alarm is going off!")
-    #text_to_speech.runAndWait()
+    # text_to_speech = pyttsx3.init()
+    # text_to_speech.say("Your alarm is going off!")
+    # text_to_speech.runAndWait()
     print("\nYour alarm is going off!")
 
 
@@ -172,15 +181,15 @@ def set_alarm():
     Allows the user to set an alarm.
     """
 
-    current_alarms = []
+    # current_alarms = []
 
     # Gets the alarm time from the new alarm input box and calculates delay.
     alarm_time = request.args.get("alarm")
 
     if alarm_time:
-        format_time = datetime.strptime(alarm_time, "%Y-%m-%dT%H:%M")
-        # alarm_time = mktime(alarm_time.timetuple())
-        format_time = mktime(format_time)
+        format_time = time.strptime(alarm_time, "%Y-%m-%dT%H:%M")
+        # format_time = mktime(alarm_time.timetuple())
+        format_time = time.mktime(format_time)
         # delay = alarm_time - time()
 
         # Activates new alarm.
@@ -189,11 +198,11 @@ def set_alarm():
         alarm.enterabs(format_time, 1, alert_alarm)
         alarm.run()
 
-        current_alarms.append(format_time)
+        # current_alarms.append(format_time)
 
-    current_alarms = str(current_alarms)
+    # current_alarms = str(current_alarms)
 
-    return current_alarms
+    # return current_alarms
     # return render_template("set_alarm.html")
 
 

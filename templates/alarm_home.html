@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Smart Alarm Clock</title>
+</head>
+
+<h1>Smart Alarm Clock</h1>
+
+<body>Last Updated: {{ current_datetime }}</body>
+
+<h3>Current Alarms</h3>
+{{ current_alarms }}
+
+<h3>Set an Alarm</h3>
+<form action="/" method="get">
+    <input type="datetime-local" name="alarm">
+    <input type="submit">
+</form>
+<br>
+<a href=/cancelalarm>Cancel an Alarm</a> </html>
