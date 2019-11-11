@@ -183,9 +183,9 @@ def set_alarm():
         # Activates new alarm.
         alarm = sched.scheduler(time.time, time.sleep)
         alarm.enterabs(format_time, 1, alert_alarm)
-        alarm.run()
+        alarm.run(blocking=False)
 
-        current_alarms.append(format_time)
+        current_alarms.append(alarm_time.replace("T", " ").strip("'"))
 
     current_alarms = str(current_alarms)
 
