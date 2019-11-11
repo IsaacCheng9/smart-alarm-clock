@@ -28,17 +28,7 @@ def main():
     forecast, temp, max_temp, min_temp, wind = get_weather(keys)
     (headline1, headline2, headline3, headline4, headline5, headline6,
      headline7, headline8, headline9, headline10) = get_news(keys)
-    # current_alarms = set_alarm()
-    set_alarm()
-    """return render_template("home.html", current_datetime=current_datetime,
-                           forecast=forecast, temp=temp,
-                           max_temp=max_temp, min_temp=min_temp, wind=wind,
-                           headline1=headline1, headline2=headline2,
-                           headline3=headline3, headline4=headline4,
-                           headline5=headline5, headline6=headline6,
-                           headline7=headline7, headline8=headline8,
-                           headline9=headline9, headline10=headline10,
-                           current_alarms=current_alarms)"""
+    current_alarms = set_alarm()
     return render_template("home.html", current_datetime=current_datetime,
                            forecast=forecast, temp=temp,
                            max_temp=max_temp, min_temp=min_temp, wind=wind,
@@ -46,7 +36,8 @@ def main():
                            headline3=headline3, headline4=headline4,
                            headline5=headline5, headline6=headline6,
                            headline7=headline7, headline8=headline8,
-                           headline9=headline9, headline10=headline10)
+                           headline9=headline9, headline10=headline10,
+                           current_alarms=current_alarms)
 
 
 def last_updated() -> datetime:
@@ -175,35 +166,30 @@ def alert_alarm():
     print("\nYour alarm is going off!")
 
 
-# @app.route("/setalarm")
 def set_alarm():
     """
     Allows the user to set an alarm.
     """
 
-    # current_alarms = []
+    current_alarms = []
 
     # Gets the alarm time from the new alarm input box and calculates delay.
     alarm_time = request.args.get("alarm")
 
     if alarm_time:
         format_time = time.strptime(alarm_time, "%Y-%m-%dT%H:%M")
-        # format_time = mktime(alarm_time.timetuple())
         format_time = time.mktime(format_time)
-        # delay = alarm_time - time()
 
         # Activates new alarm.
         alarm = sched.scheduler(time.time, time.sleep)
-        # alarm.enter(delay, 1, alert_alarm)
         alarm.enterabs(format_time, 1, alert_alarm)
         alarm.run()
 
-        # current_alarms.append(format_time)
+        current_alarms.append(format_time)
 
-    # current_alarms = str(current_alarms)
+    current_alarms = str(current_alarms)
 
-    # return current_alarms
-    # return render_template("set_alarm.html")
+    return current_alarms
 
 
 # Prevents the code from executing when the script is imported as a module.
