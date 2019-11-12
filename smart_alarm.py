@@ -14,8 +14,10 @@ import pyttsx3
 import requests
 from flask import Flask, render_template, request
 
-app = Flask(__name__)
+upcoming_alarms = []
 
+# Initialises Flask for web interface and the scheduler for the alarm.
+app = Flask(__name__)
 alarm = sched.scheduler(time.time, time.sleep)
 
 
@@ -32,7 +34,7 @@ def main():
     forecast, temp, max_temp, min_temp, wind = get_weather(api_keys)
     (headline1, headline2, headline3, headline4, headline5, headline6,
      headline7, headline8, headline9, headline10) = get_news(api_keys)
-    upcoming_alarms = set_alarm()
+    displayed_alarms = set_alarm()
     return render_template("home.html", current_datetime=current_datetime,
                            forecast=forecast, temp=temp,
                            max_temp=max_temp, min_temp=min_temp, wind=wind,
@@ -193,7 +195,8 @@ def set_alarm() -> str:
         upcoming_alarms (str): A string list of the upcoming alarms.
     """
 
-    upcoming_alarms = []
+    global upcoming_alarms
+    displayed_alarms = ""
 
     # Gets the alarm time from the new alarm input box and calculates delay.
     alarm_time = request.args.get("alarm")
@@ -206,12 +209,18 @@ def set_alarm() -> str:
 
         # Activates new alarm.
         alarm.enterabs(format_time, 1, alert_alarm)
-        # alarm.run()
 
-        upcoming_alarms.append(alarm_time.replace("T", " ").strip("'"))
-    upcoming_alarms = str(upcoming_alarms)
+        # upcoming_alarms.append(alarm_time.replace("T", " ").strip("'"))
+        upcoming_alarms.append(alarm_time)
+        ordered_alarms = sorted(upcoming_alarms)
 
-    return upcoming_alarms
+        for alarm_time in ordered_alarms:
+            if alarm_time not in displayed_alarms:
+                displayed_alarms += " " + alarm_time
+        
+    # upcoming_alarms = str(upcoming_alarms)
+
+    return displayed_alarms
 
 
 # Prevents the code from executing when the script is imported as a module.
