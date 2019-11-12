@@ -24,10 +24,7 @@ def main():
     summary.
     """
 
-    logging.basicConfig(filename="logs.txt", level=logging.DEBUG,
-                        format="%(asctime)s - %(levelname)s - %(message)s")
-    logging.debug("Smart alarm clock started.")
-
+    setup_logging()
     current_datetime = last_updated()
     keys = parse_configs()
     forecast, temp, max_temp, min_temp, wind = get_weather(keys)
@@ -43,6 +40,17 @@ def main():
                            headline7=headline7, headline8=headline8,
                            headline9=headline9, headline10=headline10,
                            upcoming_alarms=upcoming_alarms)
+
+
+def setup_logging():
+    """
+    Sets up the logging system to automatically log actions performed in the
+    program.
+    """
+
+    logging.basicConfig(filename="logs.txt", level=logging.DEBUG,
+                        format="%(asctime)s - %(levelname)s - %(message)s")
+    logging.debug("Smart alarm clock started.")
 
 
 def last_updated() -> datetime:
@@ -165,9 +173,9 @@ def alert_alarm():
     Alerts the user when their alarm is going off.
     """
 
-    # text_to_speech = pyttsx3.init()
-    # text_to_speech.say("Your alarm is going off!")
-    # text_to_speech.runAndWait()
+    text_to_speech = pyttsx3.init()
+    text_to_speech.say("Your alarm is going off!")
+    text_to_speech.runAndWait()
     print("\nYour alarm is going off!")
 
 
