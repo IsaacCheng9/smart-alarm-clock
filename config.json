@@ -2,5 +2,8 @@
     "api_keys": {
         "weather": "8bb8c8c3507631f11bb9599e7795a718",
         "news": "86a97a39f14a4a1eac894868d7b9726c"
+    },
+    "file_paths": {
+        "logging": "logs.txt"
     }
 }

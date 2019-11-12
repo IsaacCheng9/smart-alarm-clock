@@ -24,12 +24,12 @@ def main():
     summary.
     """
 
-    setup_logging()
+    api_keys, file_paths = parse_configs()
+    setup_logging(file_paths)
     current_datetime = last_updated()
-    keys = parse_configs()
-    forecast, temp, max_temp, min_temp, wind = get_weather(keys)
+    forecast, temp, max_temp, min_temp, wind = get_weather(api_keys)
     (headline1, headline2, headline3, headline4, headline5, headline6,
-     headline7, headline8, headline9, headline10) = get_news(keys)
+     headline7, headline8, headline9, headline10) = get_news(api_keys)
     upcoming_alarms = set_alarm()
     return render_template("home.html", current_datetime=current_datetime,
                            forecast=forecast, temp=temp,
@@ -42,13 +42,33 @@ def main():
                            upcoming_alarms=upcoming_alarms)
 
 
-def setup_logging():
+def parse_configs() -> dict:
+    """
+    Gets the API keys from the JSON config file.
+
+    Returns:
+        api_keys (dict): Stores the API keys for weather and news data.
+        file_paths (dict): Stores the file path for logging.
+    """
+
+    # Loads the config file and finds the API keys.
+    with open("config.json", "r") as file:
+        config = json.load(file)
+    api_keys = config["api_keys"]
+    file_paths = config["file_paths"]
+
+    return api_keys, file_paths
+
+
+def setup_logging(file_paths):
     """
     Sets up the logging system to automatically log actions performed in the
     program.
     """
 
-    logging.basicConfig(filename="logs.txt", level=logging.DEBUG,
+    log_file = file_paths["logging"]
+
+    logging.basicConfig(filename=log_file, level=logging.DEBUG,
                         format="%(asctime)s - %(levelname)s - %(message)s")
     logging.debug("Smart alarm clock started.")
 
@@ -66,22 +86,6 @@ def last_updated() -> datetime:
     print("Last Updated:\n    ", current_datetime)
 
     return current_datetime
-
-
-def parse_configs() -> dict:
-    """
-    Gets the API keys from the JSON config file.
-
-    Returns:
-        api_keys (dict): Stores the API keys for weather and news data.
-    """
-
-    # Loads the config file and finds the API keys.
-    with open("config.json", "r") as file:
-        config = json.load(file)
-    api_keys = config["api_keys"]
-
-    return api_keys
 
 
 def get_weather(api_keys: dict) -> str:
