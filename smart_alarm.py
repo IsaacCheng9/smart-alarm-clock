@@ -6,8 +6,8 @@ information, and set alarms for the future.
 
 import json
 import sched
-from datetime import date, datetime, timedelta
 import time
+from datetime import date, datetime, timedelta
 
 import pyttsx3
 import requests
@@ -28,7 +28,7 @@ def main():
     forecast, temp, max_temp, min_temp, wind = get_weather(keys)
     (headline1, headline2, headline3, headline4, headline5, headline6,
      headline7, headline8, headline9, headline10) = get_news(keys)
-    current_alarms = set_alarm()
+    upcoming_alarms = set_alarm()
     return render_template("home.html", current_datetime=current_datetime,
                            forecast=forecast, temp=temp,
                            max_temp=max_temp, min_temp=min_temp, wind=wind,
@@ -37,7 +37,7 @@ def main():
                            headline5=headline5, headline6=headline6,
                            headline7=headline7, headline8=headline8,
                            headline9=headline9, headline10=headline10,
-                           current_alarms=current_alarms)
+                           upcoming_alarms=upcoming_alarms)
 
 
 def last_updated() -> datetime:
@@ -166,16 +166,20 @@ def alert_alarm():
     print("\nYour alarm is going off!")
 
 
-def set_alarm():
+def set_alarm() -> str:
     """
     Allows the user to set an alarm.
+
+    Returns:
+        upcoming_alarms (str): A string list of the upcoming alarms.
     """
 
-    current_alarms = []
+    upcoming_alarms = []
 
     # Gets the alarm time from the new alarm input box and calculates delay.
     alarm_time = request.args.get("alarm")
 
+    # Converts from input box time format to epoch time format.
     if alarm_time:
         format_time = time.strptime(alarm_time, "%Y-%m-%dT%H:%M")
         format_time = time.mktime(format_time)
@@ -186,11 +190,10 @@ def set_alarm():
         alarm.run()
         # alarm.run(blocking=False)
 
-        current_alarms.append(alarm_time.replace("T", " ").strip("'"))
+        upcoming_alarms.append(alarm_time.replace("T", " ").strip("'"))
+    upcoming_alarms = str(upcoming_alarms)
 
-    current_alarms = str(current_alarms)
-
-    return current_alarms
+    return upcoming_alarms
 
 
 # Prevents the code from executing when the script is imported as a module.
