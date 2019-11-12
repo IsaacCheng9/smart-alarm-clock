@@ -16,6 +16,8 @@ from flask import Flask, render_template, request
 
 app = Flask(__name__)
 
+alarm = sched.scheduler(time.time, time.sleep)
+
 
 @app.route("/")
 def main():
@@ -195,6 +197,7 @@ def set_alarm() -> str:
 
     # Gets the alarm time from the new alarm input box and calculates delay.
     alarm_time = request.args.get("alarm")
+    alarm.run(blocking=False)
 
     # Converts from input box time format to epoch time format.
     if alarm_time:
@@ -202,10 +205,8 @@ def set_alarm() -> str:
         format_time = time.mktime(format_time)
 
         # Activates new alarm.
-        alarm = sched.scheduler(time.time, time.sleep)
         alarm.enterabs(format_time, 1, alert_alarm)
-        alarm.run()
-        # alarm.run(blocking=False)
+        # alarm.run()
 
         upcoming_alarms.append(alarm_time.replace("T", " ").strip("'"))
     upcoming_alarms = str(upcoming_alarms)
