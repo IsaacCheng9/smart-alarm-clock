@@ -8,7 +8,7 @@ import json
 import logging
 import sched
 import time
-from datetime import date, datetime, timedelta
+from datetime import datetime
 
 import pyttsx3
 import requests
