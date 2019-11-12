@@ -1,0 +1,6 @@
+2019-11-12 01:56:56,612 - DEBUG - This is a log message.
+2019-11-12 01:56:56,619 - DEBUG - Starting new HTTPS connection (1): api.openweathermap.org:443
+2019-11-12 01:56:56,796 - DEBUG - https://api.openweathermap.org:443 "GET /data/2.5/weather?q=exeter&appid=8bb8c8c3507631f11bb9599e7795a718&units=metric HTTP/1.1" 200 464
+2019-11-12 01:56:56,802 - DEBUG - Starting new HTTPS connection (1): newsapi.org:443
+2019-11-12 01:56:57,252 - DEBUG - https://newsapi.org:443 "GET /v2/top-headlines?country=gb&apiKey=86a97a39f14a4a1eac894868d7b9726c HTTP/1.1" 200 18007
+2019-11-12 01:56:57,263 - INFO - 127.0.0.1 - - [12/Nov/2019 01:56:57] "GET / HTTP/1.1" 200 -

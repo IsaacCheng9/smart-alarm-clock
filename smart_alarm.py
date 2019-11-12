@@ -5,6 +5,7 @@ information, and set alarms for the future.
 """
 
 import json
+import logging
 import sched
 import time
 from datetime import date, datetime, timedelta
@@ -22,6 +23,10 @@ def main():
     Shows the current time, the latest news headlines, and a weather forecast
     summary.
     """
+
+    logging.basicConfig(filename="logs.txt", level=logging.DEBUG,
+                        format="%(asctime)s - %(levelname)s - %(message)s")
+    logging.debug('This is a log message.')
 
     current_datetime = last_updated()
     keys = parse_configs()
