@@ -26,7 +26,7 @@ def main():
 
     logging.basicConfig(filename="logs.txt", level=logging.DEBUG,
                         format="%(asctime)s - %(levelname)s - %(message)s")
-    logging.debug('This is a log message.')
+    logging.debug("Smart alarm clock started.")
 
     current_datetime = last_updated()
     keys = parse_configs()
