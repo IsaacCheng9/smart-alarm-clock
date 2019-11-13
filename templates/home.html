@@ -46,7 +46,7 @@
 </p>
 
 <h3>Upcoming Alarms</h3>
-{{ upcoming_alarms }}
+{{ displayed_alarms }}
 
 <h3>Set an Alarm</h3>
 <form action="/" method="get">
@@ -56,5 +56,5 @@
 
 <h3>Cancel an Alarm</h3>
 <form action="/" method="get">
-    <input type="text" name="cancel_alarm">
+    <input type="datetime-local" name="cancel_alarm">
     <input type="submit">

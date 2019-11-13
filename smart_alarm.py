@@ -44,7 +44,8 @@ def main():
                            headline5=headline5, headline6=headline6,
                            headline7=headline7, headline8=headline8,
                            headline9=headline9, headline10=headline10,
-                           upcoming_alarms=upcoming_alarms)
+                           upcoming_alarms=upcoming_alarms,
+                           displayed_alarms=displayed_alarms)
 
 
 def parse_configs() -> dict:
@@ -193,7 +194,7 @@ def set_alarm() -> str:
     Allows the user to set an alarm.
 
     Returns:
-        upcoming_alarms (str): A string list of the upcoming alarms.
+        upcoming_alarms (list): A list of the upcoming alarms.
     """
 
     global upcoming_alarms
@@ -210,6 +211,7 @@ def set_alarm() -> str:
 
         # Activates new alarm to alert at given time.
         alarm.enterabs(format_time, 1, alert_alarm)
+        print(alarm.queue)
 
         # upcoming_alarms.append(alarm_time.replace("T", " ").strip("'"))
         upcoming_alarms.append(alarm_time)
@@ -217,7 +219,7 @@ def set_alarm() -> str:
 
         for alarm_time in upcoming_alarms:
             if alarm_time not in displayed_alarms:
-                displayed_alarms += " " + alarm_time
+                displayed_alarms += "\n" + alarm_time
 
     return upcoming_alarms, displayed_alarms
 
@@ -226,12 +228,18 @@ def cancel_alarm(upcoming_alarms):
     alarm_cancel = request.args.get("cancel_alarm")
 
     if alarm_cancel:
-        """for alarm_cancel in upcoming_alarms:
-            index = upcoming_alarms.index(alarm_cancel)
-            alarm.cancel(upcoming_alarms[index])"""
+        alarm_cancel_epoch = time.strptime(alarm_cancel, "%Y-%m-%dT%H:%M")
+        alarm_cancel_epoch = time.mktime(alarm_cancel_epoch)
+        for event in alarm.queue:
+            epoch = event[0]
+            if epoch == alarm_cancel_epoch:
+                alarm.cancel(event)
+            print(alarm.queue)
 
-        index = int(alarm_cancel) - 1
-        alarm.cancel(upcoming_alarms[index])
+            """index = upcoming_alarms.index(alarm_cancel)
+            print(alarm.queue)
+            alarm.cancel(alarm_cancel)
+            print(alarm.queue)"""
 
 
 # Prevents the code from executing when the script is imported as a module.
