@@ -126,11 +126,11 @@ def get_weather(api_keys: dict) -> str:
     min_temp = str(weather["main"]["temp_min"])
     wind = str(weather["wind"]["speed"])
 
-    # Prints a weather forecast summary.
+    """# Prints a weather forecast summary.
     print("\nWeather Forecast:\n    " + forecast,
           "with an average temperature of", temp +
           "°C.\n    Temperature highs of", max_temp + "°C and lows of",
-          min_temp + "°C.\n    Wind speeds of", wind, "m/s.")
+          min_temp + "°C.\n    Wind speeds of", wind, "m/s.")"""
 
     return forecast, temp, max_temp, min_temp, wind
 
@@ -167,11 +167,11 @@ def get_news(api_keys: dict) -> str:
     headline9 = str(news["articles"][8]["title"])
     headline10 = str(news["articles"][9]["title"])
 
-    # Prints the top ten headlines.
+    """# Prints the top ten headlines.
     print("\nNews Headlines for Today:")
     for i in range(10):
         articles = str(news["articles"][i]["title"])
-        print("    #:" + str(i + 1), articles)
+        print("    #:" + str(i + 1), articles)"""
 
     return (headline1, headline2, headline3, headline4, headline5, headline6,
             headline7, headline8, headline9, headline10)
@@ -208,7 +208,7 @@ def set_alarm() -> str:
         format_time = time.strptime(alarm_time, "%Y-%m-%dT%H:%M")
         format_time = time.mktime(format_time)
 
-        # Activates new alarm.
+        # Activates new alarm to alert at given time.
         alarm.enterabs(format_time, 1, alert_alarm)
 
         # upcoming_alarms.append(alarm_time.replace("T", " ").strip("'"))
@@ -219,16 +219,19 @@ def set_alarm() -> str:
             if alarm_time not in displayed_alarms:
                 displayed_alarms += " " + alarm_time
 
-    # upcoming_alarms = str(upcoming_alarms)
-
     return upcoming_alarms, displayed_alarms
 
 
 def cancel_alarm(upcoming_alarms):
     alarm_cancel = request.args.get("cancel_alarm")
 
-    for alarm_cancel in upcoming_alarms:
-        alarm.cancel()
+    if alarm_cancel:
+        """for alarm_cancel in upcoming_alarms:
+            index = upcoming_alarms.index(alarm_cancel)
+            alarm.cancel(upcoming_alarms[index])"""
+
+        index = int(alarm_cancel) - 1
+        alarm.cancel(upcoming_alarms[index])
 
 
 # Prevents the code from executing when the script is imported as a module.
