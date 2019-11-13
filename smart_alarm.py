@@ -34,7 +34,8 @@ def main():
     forecast, temp, max_temp, min_temp, wind = get_weather(api_keys)
     (headline1, headline2, headline3, headline4, headline5, headline6,
      headline7, headline8, headline9, headline10) = get_news(api_keys)
-    displayed_alarms = set_alarm()
+    upcoming_alarms, displayed_alarms = set_alarm()
+    cancel_alarm(upcoming_alarms)
     return render_template("home.html", current_datetime=current_datetime,
                            forecast=forecast, temp=temp,
                            max_temp=max_temp, min_temp=min_temp, wind=wind,
@@ -212,15 +213,22 @@ def set_alarm() -> str:
 
         # upcoming_alarms.append(alarm_time.replace("T", " ").strip("'"))
         upcoming_alarms.append(alarm_time)
-        ordered_alarms = sorted(upcoming_alarms)
+        sorted(upcoming_alarms)
 
-        for alarm_time in ordered_alarms:
+        for alarm_time in upcoming_alarms:
             if alarm_time not in displayed_alarms:
                 displayed_alarms += " " + alarm_time
-        
+
     # upcoming_alarms = str(upcoming_alarms)
 
-    return displayed_alarms
+    return upcoming_alarms, displayed_alarms
+
+
+def cancel_alarm(upcoming_alarms):
+    alarm_cancel = request.args.get("cancel_alarm")
+
+    for alarm_cancel in upcoming_alarms:
+        alarm.cancel()
 
 
 # Prevents the code from executing when the script is imported as a module.
