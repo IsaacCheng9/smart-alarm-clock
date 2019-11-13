@@ -213,7 +213,7 @@ def set_alarm() -> str:
 
         # upcoming_alarms.append(alarm_time.replace("T", " ").strip("'"))
         upcoming_alarms.append(alarm_time)
-        sorted(upcoming_alarms)
+        upcoming_alarms = sorted(upcoming_alarms)
 
         for alarm_time in upcoming_alarms:
             if alarm_time not in displayed_alarms:
