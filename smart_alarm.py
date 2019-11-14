@@ -192,11 +192,15 @@ def alert_alarm(alarm_time: str, alarm_label: str, alarm_repeat: str):
     print("\nYour alarm with label", alarm_label, "is going off!")
 
     if alarm_repeat:
+        new_date = int(alarm_time[8:10]) + 1
+        alarm_time = alarm_time[:8] + str(new_date) + alarm_time[10:]
+
         format_time = time.strptime(alarm_time, "%Y-%m-%dT%H:%M")
         format_time = time.mktime(format_time)
 
         # Activates new alarm to alert at given time.
-        alarm.enterabs(format_time, 1, alert_alarm, argument=(alarm_label,))
+        alarm.enterabs(format_time, 1, alert_alarm, argument=(alarm_time,
+                       alarm_label, alarm_repeat))
 
 
 def set_alarm() -> list:
@@ -219,15 +223,17 @@ def set_alarm() -> list:
     # Converts from input box time format to epoch time format.
     if alarm_time:
         format_time = time.strptime(alarm_time, "%Y-%m-%dT%H:%M")
+        print(format_time)
         format_time = time.mktime(format_time)
 
         # Activates new alarm to alert at given time.
-        alarm.enterabs(format_time, 1, alert_alarm, argument=(alarm_label,
-                       alarm_repeat,))
+        alarm.enterabs(format_time, 1, alert_alarm, argument=(alarm_time,
+                       alarm_label, alarm_repeat,))
         print(alarm.queue)
 
         # Combines the alarm time and the alarm label for display.
-        alarm_input = alarm_time.replace("T", " ") + " " + alarm_label
+        alarm_input = (alarm_time.replace("T", " ") + " " + alarm_label + " ("
+                       + alarm_repeat + ")")
         upcoming_alarms.append(alarm_input)
         upcoming_alarms = sorted(upcoming_alarms)
 
