@@ -15,6 +15,7 @@ import requests
 from flask import Flask, render_template, request
 
 upcoming_alarms = []
+upcoming_alarms_labels = []
 
 # Initialises Flask for web interface and the scheduler for the alarm.
 app = Flask(__name__)
@@ -178,15 +179,18 @@ def get_news(api_keys: dict) -> str:
             headline7, headline8, headline9, headline10)
 
 
-def alert_alarm():
+def alert_alarm(alarm_label):
     """
     Alerts the user when their alarm is going off.
+
+    Args:
+        alarm_label (str): The label associated with the alarm.
     """
 
     text_to_speech = pyttsx3.init()
-    text_to_speech.say("Your alarm is going off!")
+    text_to_speech.say(("Your alarm label", alarm_label, "is going off."))
     text_to_speech.runAndWait()
-    print("\nYour alarm is going off!")
+    print("\nYour alarm with label", alarm_label, "is going off!")
 
 
 def set_alarm() -> str:
@@ -197,11 +201,12 @@ def set_alarm() -> str:
         upcoming_alarms (list): A list of the upcoming alarms.
     """
 
-    global upcoming_alarms
+    global upcoming_alarms, upcoming_alarms_labels
     displayed_alarms = ""
 
     # Gets the alarm time from the new alarm input box and calculates delay.
     alarm_time = request.args.get("alarm")
+    alarm_label = request.args.get("alarm_label")
     alarm.run(blocking=False)
 
     # Converts from input box time format to epoch time format.
@@ -210,16 +215,18 @@ def set_alarm() -> str:
         format_time = time.mktime(format_time)
 
         # Activates new alarm to alert at given time.
-        alarm.enterabs(format_time, 1, alert_alarm)
+        alarm.enterabs(format_time, 1, alert_alarm, argument=(alarm_label,))
         print(alarm.queue)
 
-        # upcoming_alarms.append(alarm_time.replace("T", " ").strip("'"))
         upcoming_alarms.append(alarm_time)
+        upcoming_alarms_labels.append(alarm_label)
+        zipped_alarms = zip(upcoming_alarms, upcoming_alarms_labels)
+        z = [x for _, x in sorted(zipped_alarms)]
         upcoming_alarms = sorted(upcoming_alarms)
 
         for alarm_time in upcoming_alarms:
             if alarm_time not in displayed_alarms:
-                displayed_alarms += "\n" + alarm_time
+                displayed_alarms += "\n" + alarm_time + alarm_label
 
     return upcoming_alarms, displayed_alarms
 
