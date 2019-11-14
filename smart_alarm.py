@@ -36,7 +36,7 @@ def main():
     (headline1, headline2, headline3, headline4, headline5, headline6,
      headline7, headline8, headline9, headline10) = get_news(api_keys)
     upcoming_alarms, displayed_alarms = set_alarm()
-    cancel_alarm(upcoming_alarms)
+    cancel_alarm()
     return render_template("home.html", current_datetime=current_datetime,
                            forecast=forecast, temp=temp,
                            max_temp=max_temp, min_temp=min_temp, wind=wind,
@@ -45,7 +45,6 @@ def main():
                            headline5=headline5, headline6=headline6,
                            headline7=headline7, headline8=headline8,
                            headline9=headline9, headline10=headline10,
-                           upcoming_alarms=upcoming_alarms,
                            displayed_alarms=displayed_alarms)
 
 
@@ -67,7 +66,7 @@ def parse_configs() -> dict:
     return api_keys, file_paths
 
 
-def setup_logging(file_paths):
+def setup_logging(file_paths: dict):
     """
     Sets up the logging system to automatically log actions performed in the
     program.
@@ -179,7 +178,7 @@ def get_news(api_keys: dict) -> str:
             headline7, headline8, headline9, headline10)
 
 
-def alert_alarm(alarm_label):
+def alert_alarm(alarm_time: str, alarm_label: str, alarm_repeat: str):
     """
     Alerts the user when their alarm is going off.
 
@@ -192,13 +191,20 @@ def alert_alarm(alarm_label):
     text_to_speech.runAndWait()
     print("\nYour alarm with label", alarm_label, "is going off!")
 
+    if alarm_repeat:
+        format_time = time.strptime(alarm_time, "%Y-%m-%dT%H:%M")
+        format_time = time.mktime(format_time)
 
-def set_alarm() -> str:
+        # Activates new alarm to alert at given time.
+        alarm.enterabs(format_time, 1, alert_alarm, argument=(alarm_label,))
+
+
+def set_alarm() -> list:
     """
     Allows the user to set an alarm.
 
     Returns:
-        upcoming_alarms (list): A list of the upcoming alarms.
+        upcoming_alarms (list): A  list of the upcoming alarms.
     """
 
     global upcoming_alarms, upcoming_alarms_labels
@@ -207,6 +213,7 @@ def set_alarm() -> str:
     # Gets the alarm time from the new alarm input box and calculates delay.
     alarm_time = request.args.get("alarm")
     alarm_label = request.args.get("alarm_label")
+    alarm_repeat = request.args.get("alarm_repeat")
     alarm.run(blocking=False)
 
     # Converts from input box time format to epoch time format.
@@ -215,23 +222,30 @@ def set_alarm() -> str:
         format_time = time.mktime(format_time)
 
         # Activates new alarm to alert at given time.
-        alarm.enterabs(format_time, 1, alert_alarm, argument=(alarm_label,))
+        alarm.enterabs(format_time, 1, alert_alarm, argument=(alarm_label,
+                       alarm_repeat,))
         print(alarm.queue)
 
-        upcoming_alarms.append(alarm_time)
-        upcoming_alarms_labels.append(alarm_label)
-        zipped_alarms = zip(upcoming_alarms, upcoming_alarms_labels)
-        z = [x for _, x in sorted(zipped_alarms)]
+        # Combines the alarm time and the alarm label for display.
+        alarm_input = alarm_time.replace("T", " ") + " " + alarm_label
+        upcoming_alarms.append(alarm_input)
         upcoming_alarms = sorted(upcoming_alarms)
 
-        for alarm_time in upcoming_alarms:
-            if alarm_time not in displayed_alarms:
-                displayed_alarms += "\n" + alarm_time + alarm_label
+        # Creates the displayed list of alarms.
+        for alarm_input in upcoming_alarms:
+            if alarm_input not in displayed_alarms:
+                displayed_alarms += "\n" + alarm_input
 
     return upcoming_alarms, displayed_alarms
 
 
-def cancel_alarm(upcoming_alarms):
+def cancel_alarm():
+    """
+    Allows the user to cancel an alarm.
+
+    Args:
+        upcoming_alarms (str): A list of the upcoming alarms.
+    """
     alarm_cancel = request.args.get("cancel_alarm")
 
     if alarm_cancel:
@@ -242,11 +256,6 @@ def cancel_alarm(upcoming_alarms):
             if epoch == alarm_cancel_epoch:
                 alarm.cancel(event)
             print(alarm.queue)
-
-            """index = upcoming_alarms.index(alarm_cancel)
-            print(alarm.queue)
-            alarm.cancel(alarm_cancel)
-            print(alarm.queue)"""
 
 
 # Prevents the code from executing when the script is imported as a module.
