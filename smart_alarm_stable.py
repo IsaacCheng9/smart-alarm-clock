@@ -180,7 +180,7 @@ def alert_alarm(alarm_time: str, alarm_label: str, alarm_repeat: str):
     """
 
     text_to_speech = pyttsx3.init()
-    text_to_speech.say(("Your alarm label", alarm_label, "is going off."))
+    text_to_speech.say(("Your alarm with label", alarm_label, "is going off."))
     text_to_speech.runAndWait()
     print("\nYour alarm with label", alarm_label, "is going off!")
 
