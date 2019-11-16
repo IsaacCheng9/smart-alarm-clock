@@ -35,7 +35,9 @@ def main():
     forecast, temp, max_temp, min_temp, wind = get_weather(api_keys)
     (headline1, headline2, headline3, headline4, headline5, headline6,
      headline7, headline8, headline9, headline10) = get_news(api_keys)
-    upcoming_alarms, displayed_alarms = set_alarm()
+    alarm_time, alarm_label, alarm_repeat = get_alarm()
+    upcoming_alarms, displayed_alarms = set_alarm(alarm_time, alarm_label,
+                                                  alarm_repeat)
     cancel_alarm()
     return render_template("home.html", current_datetime=current_datetime,
                            forecast=forecast, temp=temp,
@@ -194,31 +196,45 @@ def alert_alarm(alarm_time: str, alarm_label: str, alarm_repeat: str):
     if alarm_repeat:
         new_date = int(alarm_time[8:10]) + 1
         alarm_time = alarm_time[:8] + str(new_date) + alarm_time[10:]
+        set_alarm(alarm_time, alarm_label, alarm_repeat)
 
-        format_time = time.strptime(alarm_time, "%Y-%m-%dT%H:%M")
-        format_time = time.mktime(format_time)
-
-        # Activates new alarm to alert at given time.
-        alarm.enterabs(format_time, 1, alert_alarm, argument=(alarm_time,
-                       alarm_label, alarm_repeat))
+        # return alarm_time, alarm_label, alarm_repeat
 
 
-def set_alarm() -> list:
+def get_alarm() -> str:
     """
-    Allows the user to set an alarm.
+    Gets new alarm input from web form.
 
     Returns:
-        upcoming_alarms (list): A  list of the upcoming alarms.
+        alarm_time (str): The date and time of the alarm.
+        alarm_label (str): The label of the alarm.
+        alarm_repeat (str): Whether the alarm repeats or not.
     """
-
-    global upcoming_alarms, upcoming_alarms_labels
-    displayed_alarms = ""
 
     # Gets the alarm time from the new alarm input box and calculates delay.
     alarm_time = request.args.get("alarm")
     alarm_label = request.args.get("alarm_label")
     alarm_repeat = request.args.get("alarm_repeat")
-    alarm.run(blocking=False)
+
+    return alarm_time, alarm_label, alarm_repeat
+
+
+def set_alarm(alarm_time: str, alarm_label: str, alarm_repeat: str) -> list:
+    """
+    Allows the user to set an alarm.
+
+    Args:
+        alarm_time (str): The date and time of the alarm.
+        alarm_label (str): The label of the alarm.
+        alarm_repeat (str): Whether the alarm repeats or not.
+
+    Returns:
+        upcoming_alarms (list): A list of the upcoming alarms.
+        displayed_alarms (str): A string list of the upcoming alarms.
+    """
+
+    global upcoming_alarms, upcoming_alarms_labels
+    displayed_alarms = ""
 
     # Converts from input box time format to epoch time format.
     if alarm_time:
@@ -228,12 +244,16 @@ def set_alarm() -> list:
 
         # Activates new alarm to alert at given time.
         alarm.enterabs(format_time, 1, alert_alarm, argument=(alarm_time,
-                       alarm_label, alarm_repeat,))
+                                                              alarm_label,
+                                                              alarm_repeat,))
         print(alarm.queue)
 
         # Combines the alarm time and the alarm label for display.
-        alarm_input = (alarm_time.replace("T", " ") + " " + alarm_label + " ("
-                       + alarm_repeat + ")")
+        if alarm_repeat:
+            alarm_input = (alarm_time.replace("T", " ") + " " + alarm_label +
+                           " (" + alarm_repeat + ")")
+        else:
+            alarm_input = (alarm_time.replace("T", " ") + " " + alarm_label)
         upcoming_alarms.append(alarm_input)
         upcoming_alarms = sorted(upcoming_alarms)
 
@@ -252,8 +272,10 @@ def cancel_alarm():
     Args:
         upcoming_alarms (str): A list of the upcoming alarms.
     """
+
     alarm_cancel = request.args.get("cancel_alarm")
 
+    # Looks for the inputted alarm and cancels it.
     if alarm_cancel:
         alarm_cancel_epoch = time.strptime(alarm_cancel, "%Y-%m-%dT%H:%M")
         alarm_cancel_epoch = time.mktime(alarm_cancel_epoch)
