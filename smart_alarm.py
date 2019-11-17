@@ -17,7 +17,11 @@ from flask import Flask, render_template, request
 upcoming_alarms = []
 upcoming_alarms_labels = []
 notifications = []
-displayed_notifications = []
+notification1 = " "
+notification2 = " "
+notification3 = " "
+notification4 = " "
+notification5 = " "
 
 # Initialises Flask for web interface and the scheduler for the alarm.
 app = Flask(__name__)
@@ -42,7 +46,11 @@ def main():
                                                   alarm_repeat)
     cancel_alarm()
     return render_template("home.html", current_datetime=current_datetime,
-                           displayed_notifications=displayed_notifications,
+                           notification1=notification1,
+                           notification2=notification2,
+                           notification3=notification3,
+                           notification4=notification4,
+                           notification5=notification5,
                            forecast=forecast, temp=temp,
                            max_temp=max_temp, min_temp=min_temp, wind=wind,
                            headline1=headline1, headline2=headline2,
@@ -96,22 +104,30 @@ def last_updated() -> datetime:
         "%Y-%m-%d %H:%M:%S")
     print("Last Updated:\n    ", current_datetime)
 
-    get_notifications("Date and time has been updated!")
-
     return current_datetime
 
 
 def get_notifications(new_notification):
-    global displayed_notifications
+    # global notification1, notification2, notification3, notification4, notification5
+    global notification1, notification2, notification3, notification4
+    global notification5
 
+    # Adds new notification to the list.
     notifications.append(new_notification)
     print(notifications)
-    str_notifications = "\n".join(notifications)
-    print(str_notifications)
 
-    displayed_notifications = "\n".join(notifications)
+    # Gets the latest five notifications.
+    try:
+        notification1 = notifications[-1]
+        notification2 = notifications[-2]
+        notification3 = notifications[-3]
+        notification4 = notifications[-4]
+        notification5 = notifications[-5]
+    except IndexError:
+        pass
 
-    return notifications, displayed_notifications
+    return (notifications, notification1, notification2, notification3,
+            notification4, notification5)
 
 
 def get_weather(api_keys: dict) -> str:
@@ -147,11 +163,7 @@ def get_weather(api_keys: dict) -> str:
     min_temp = str(weather["main"]["temp_min"])
     wind = str(weather["wind"]["speed"])
 
-    """# Prints a weather forecast summary.
-    print("\nWeather Forecast:\n    " + forecast,
-          "with an average temperature of", temp +
-          "°C.\n    Temperature highs of", max_temp + "°C and lows of",
-          min_temp + "°C.\n    Wind speeds of", wind, "m/s.")"""
+    get_notifications("Weather has been updated.")
 
     return forecast, temp, max_temp, min_temp, wind
 
@@ -193,6 +205,8 @@ def get_news(api_keys: dict) -> str:
     for i in range(10):
         articles = str(news["articles"][i]["title"])
         print("    #:" + str(i + 1), articles)"""
+
+    get_notifications("News headlines have been updated.")
 
     return (headline1, headline2, headline3, headline4, headline5, headline6,
             headline7, headline8, headline9, headline10)
@@ -280,6 +294,8 @@ def set_alarm(alarm_time: str, alarm_label: str, alarm_repeat: str) -> list:
             if alarm_input not in displayed_alarms:
                 displayed_alarms += "\n" + alarm_input
 
+    # get_notifications("A new alarm has been added.")
+
     return upcoming_alarms, displayed_alarms
 
 
@@ -301,6 +317,8 @@ def cancel_alarm():
             epoch = event[0]
             if epoch == alarm_cancel_epoch:
                 alarm.cancel(event)
+                get_notifications(
+                    "Your alarm has successfully been cancelled.")
             print(alarm.queue)
 
 
