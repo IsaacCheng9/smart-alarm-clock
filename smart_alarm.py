@@ -17,11 +17,11 @@ from flask import Flask, render_template, request
 upcoming_alarms = []
 upcoming_alarms_labels = []
 notifications = []
-notification1 = " "
-notification2 = " "
-notification3 = " "
-notification4 = " "
-notification5 = " "
+notification1 = ""
+notification2 = ""
+notification3 = ""
+notification4 = ""
+notification5 = ""
 
 # Initialises Flask for web interface and the scheduler for the alarm.
 app = Flask(__name__)
@@ -107,13 +107,24 @@ def last_updated() -> datetime:
     return current_datetime
 
 
-def get_notifications(new_notification):
-    # global notification1, notification2, notification3, notification4, notification5
+def get_notifications(new_notification: str):
+    """
+    Adds notifications as news, weather, or alarms are changed.
+
+    Args:
+        new_notification (str): Stores the new notification to be added.
+
+    Returns:
+        notifications# (str): Stores the numbered notification (depending on
+                              #).
+    """
+
     global notification1, notification2, notification3, notification4
     global notification5
 
     # Adds new notification to the list.
-    notifications.append(new_notification)
+    notifications.append(datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ": "
+                         + new_notification)
     print(notifications)
 
     # Gets the latest five notifications.
@@ -123,11 +134,12 @@ def get_notifications(new_notification):
         notification3 = notifications[-3]
         notification4 = notifications[-4]
         notification5 = notifications[-5]
+    # Prevents crashing when there are no notifications on program startup.
     except IndexError:
         pass
 
-    return (notifications, notification1, notification2, notification3,
-            notification4, notification5)
+    return (notification1, notification2, notification3, notification4,
+            notification5)
 
 
 def get_weather(api_keys: dict) -> str:
@@ -247,6 +259,7 @@ def get_alarm() -> str:
     alarm_time = request.args.get("alarm")
     alarm_label = request.args.get("alarm_label")
     alarm_repeat = request.args.get("alarm_repeat")
+    alarm.run(blocking=False)
 
     return alarm_time, alarm_label, alarm_repeat
 
