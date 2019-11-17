@@ -16,6 +16,8 @@ from flask import Flask, render_template, request
 
 upcoming_alarms = []
 upcoming_alarms_labels = []
+notifications = []
+displayed_notifications = []
 
 # Initialises Flask for web interface and the scheduler for the alarm.
 app = Flask(__name__)
@@ -40,6 +42,7 @@ def main():
                                                   alarm_repeat)
     cancel_alarm()
     return render_template("home.html", current_datetime=current_datetime,
+                           displayed_notifications=displayed_notifications,
                            forecast=forecast, temp=temp,
                            max_temp=max_temp, min_temp=min_temp, wind=wind,
                            headline1=headline1, headline2=headline2,
@@ -93,7 +96,22 @@ def last_updated() -> datetime:
         "%Y-%m-%d %H:%M:%S")
     print("Last Updated:\n    ", current_datetime)
 
+    get_notifications("Date and time has been updated!")
+
     return current_datetime
+
+
+def get_notifications(new_notification):
+    global displayed_notifications
+
+    notifications.append(new_notification)
+    print(notifications)
+    str_notifications = "\n".join(notifications)
+    print(str_notifications)
+
+    displayed_notifications = "\n".join(notifications)
+
+    return notifications, displayed_notifications
 
 
 def get_weather(api_keys: dict) -> str:
