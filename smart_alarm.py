@@ -83,6 +83,9 @@ def setup_logging(file_paths: dict):
     """
     Sets up the logging system to automatically log actions performed in the
     program.
+
+    Args:
+        file_paths (dict): Stores the file path for logging.
     """
 
     log_file = file_paths["logging"]
@@ -158,9 +161,6 @@ def get_weather(api_keys: dict) -> str:
     """
 
     # Gets the API for weather data on user's city.
-    """weather_api = ("https://api.openweathermap.org/data/2.5/weather?"
-                   "q={}&appid=8bb8c8c3507631f11bb9599e7795a718"
-                   "&units=metric").format(city)"""
     weather_key = api_keys["weather"]
     weather_api = ("https://api.openweathermap.org/data/2.5/weather?"
                    "q=exeter&appid=8bb8c8c3507631f11bb9599e7795a718"
@@ -211,12 +211,6 @@ def get_news(api_keys: dict) -> str:
     headline8 = str(news["articles"][7]["title"])
     headline9 = str(news["articles"][8]["title"])
     headline10 = str(news["articles"][9]["title"])
-
-    """# Prints the top ten headlines.
-    print("\nNews Headlines for Today:")
-    for i in range(10):
-        articles = str(news["articles"][i]["title"])
-        print("    #:" + str(i + 1), articles)"""
 
     get_notifications("News headlines have been updated.")
 
@@ -299,6 +293,8 @@ def set_alarm(alarm_time: str, alarm_label: str, alarm_repeat: str) -> list:
                            " (" + alarm_repeat + ")")
         else:
             alarm_input = (alarm_time.replace("T", " ") + " " + alarm_label)
+
+        # Adds alarm to the list of alarms and sorts them chronologically.
         upcoming_alarms.append(alarm_input)
         upcoming_alarms = sorted(upcoming_alarms)
 
@@ -315,7 +311,6 @@ def set_alarm(alarm_time: str, alarm_label: str, alarm_repeat: str) -> list:
 def cancel_alarm():
     """
     Allows the user to cancel an alarm.
-
     Args:
         upcoming_alarms (str): A list of the upcoming alarms.
     """
