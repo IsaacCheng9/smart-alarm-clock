@@ -128,7 +128,6 @@ def get_notifications(new_notification: str):
     # Adds new notification to the list.
     notifications.append(datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ": "
                          + new_notification)
-    print(notifications)
 
     # Gets the latest five notifications.
     try:
