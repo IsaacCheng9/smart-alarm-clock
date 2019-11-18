@@ -324,9 +324,6 @@ def set_alarm() -> list:
 def cancel_alarm():
     """
     Allows the user to cancel an alarm.
-
-    Args:
-        upcoming_alarms (list): A list of the upcoming alarms.
     """
 
     # Gets the time for the alarm to cancel.
