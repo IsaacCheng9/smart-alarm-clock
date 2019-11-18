@@ -1,7 +1,9 @@
 """
 A smart alarm clock presented in a basic web interface, created using the
 Flask module in Python. The user is able to read updated weather and news
-information, and set alarms for the future.
+information, receiving notifications if new weather or news information is
+obtained. The user can also set alarms for the future (including alarms which
+repeat every day), and cancel these alarms if they change their mind.
 """
 
 import json
@@ -31,6 +33,9 @@ def main() -> str:
     """
     Shows the current time, the latest news headlines, and a weather forecast
     summary.
+
+    Returns:
+        render_template() (str): Renders the HTML to display on webpage.
     """
 
     # Sets up the API keys and file paths, then starts logging.
@@ -42,9 +47,8 @@ def main() -> str:
     forecast, temp, max_temp, min_temp, wind = get_weather(api_keys, location)
     headlines = get_news(api_keys, location)
 
-    # Enables alarm functionality.
+    # Checks for alarm inputs.
     get_alarm_inputs()
-    cancel_alarm()
 
     # Returns the variables to the HTML file to render webpage.
     return render_template("home.html", current_datetime=current_datetime,
@@ -110,10 +114,9 @@ def last_updated() -> datetime:
     return current_datetime
 
 
-def get_notifications(notification_type: str, new_notification: str):
+def get_notifications(notification_type: str, new_notification: str) -> list:
     """
     Adds notifications as news, weather, or alarms are changed.
-
 
     Args:
         notification_type (str): Stores the type of notification for
@@ -121,7 +124,10 @@ def get_notifications(notification_type: str, new_notification: str):
         new_notification (str): Stores the new notification to be added.
 
     Returns:
-        notifications (list): Stores a list of notifications to be displayed.
+        news_notifications (list): Stores a list of news notifications to be
+                                   displayed.
+        weather_notifications (list): Stores a list of weather notifications to
+                                      be displayed.
     """
 
     # Adds a timestamp to new notifications.
@@ -188,7 +194,7 @@ def get_weather(api_keys: dict, location: dict) -> str:
     return forecast, temp, max_temp, min_temp, wind
 
 
-def get_news(api_keys: dict, location: dict) -> str:
+def get_news(api_keys: dict, location: dict) -> list:
     """
     Gets the news headlines.
 
@@ -232,44 +238,6 @@ def get_news(api_keys: dict, location: dict) -> str:
     return headlines
 
 
-def alert_alarm(alarm_time: str, alarm_label: str, alarm_repeat: str) -> list:
-    """
-    Alerts the user when their alarm is going off.
-
-    Args:
-        alarm_time (str): The date and time of the alarm.
-        alarm_label (str): The label of the alarm.
-        alarm_repeat (str): Whether the alarm repeats or not.
-
-    Returns:
-        upcoming_alarms (list): A list of the upcoming alarms.
-    """
-
-    global upcoming_alarms
-
-    # Alerts user about their alarm via voiceover.
-    text_to_speech = pyttsx3.init()
-    text_to_speech.say(("Your alarm with label", alarm_label, "is going off."))
-    text_to_speech.runAndWait()
-
-    # Deletes the alarm from the alarms list.
-    del upcoming_alarms[0]
-
-    # Repeats the alarm for the next day if repeating alarm option is set.
-    if alarm_repeat:
-        format_time = time.strptime(alarm_time, "%Y-%m-%dT%H:%M")
-        format_time = time.mktime(format_time)
-        format_time += 86400
-
-        # Converts back from epoch time to datetime.
-        alarm_time = time.strftime(
-            "%Y-%m-%dT%H:%M", time.localtime(format_time))
-
-        set_alarm(alarm_time, alarm_label, alarm_repeat, format_time)
-
-    return upcoming_alarms
-
-
 def get_alarm_inputs():
     """
     Gets the alarm inputs from the forms in the webpage.
@@ -281,12 +249,21 @@ def get_alarm_inputs():
     alarm_repeat = request.args.get("alarm_repeat")
     alarm.run(blocking=False)
 
-    # Converts from input box time format to epoch time format.
+    # Gets the time for the alarm to cancel.
+    alarm_cancel = request.args.get("cancel_alarm")
+
+    # Checks if the user has input an alarm to set.
     if alarm_time:
+        # Converts from input box time format to epoch time format.
         format_time = time.strptime(alarm_time, "%Y-%m-%dT%H:%M")
         format_time = time.mktime(format_time)
 
+        # Schedules the alarm if there's an alarm input.
         set_alarm(alarm_time, alarm_label, alarm_repeat, format_time)
+
+    # Checks if the user has input an alarm to cancel.
+    if alarm_cancel:
+        cancel_alarm(alarm_cancel)
 
 
 def set_alarm(alarm_time: str, alarm_label: str, alarm_repeat: str,
@@ -298,6 +275,7 @@ def set_alarm(alarm_time: str, alarm_label: str, alarm_repeat: str,
         alarm_time (str): The date and time of the alarm.
         alarm_label (str): The label of the alarm.
         alarm_repeat (str): Whether the alarm repeats or not.
+        format_time (float): The alarm input in epoch time.
 
     Returns:
         upcoming_alarms (list): A list of the upcoming alarms.
@@ -324,27 +302,63 @@ def set_alarm(alarm_time: str, alarm_label: str, alarm_repeat: str,
     return upcoming_alarms
 
 
-def cancel_alarm():
+def alert_alarm(alarm_time: str, alarm_label: str, alarm_repeat: str) -> list:
+    """
+    Alerts the user when their alarm is going off.
+
+    Args:
+        alarm_time (str): The date and time of the alarm.
+        alarm_label (str): The label of the alarm.
+        alarm_repeat (str): Whether the alarm repeats or not.
+
+    Returns:
+        upcoming_alarms (list): A list of the upcoming alarms.
+    """
+
+    global upcoming_alarms
+
+    # Alerts user about their alarm via voiceover.
+    text_to_speech = pyttsx3.init()
+    text_to_speech.say(("Your alarm with label", alarm_label, "is going off."))
+    text_to_speech.runAndWait()
+
+    # Deletes the alarm from the alarms list.
+    del upcoming_alarms[0]
+
+    # Repeats the alarm for the next day if repeating alarm option is set.
+    if alarm_repeat:
+        # Converts alarm time to epoch time and adds an extra day.
+        format_time = time.strptime(alarm_time, "%Y-%m-%dT%H:%M")
+        format_time = time.mktime(format_time)
+        format_time += 86400
+
+        # Converts back from epoch time to datetime.
+        alarm_time = time.strftime(
+            "%Y-%m-%dT%H:%M", time.localtime(format_time))
+
+        # Sets the alarm for the same time the next day.
+        set_alarm(alarm_time, alarm_label, alarm_repeat, format_time)
+
+    return upcoming_alarms
+
+
+def cancel_alarm(alarm_cancel: str):
     """
     Allows the user to cancel an alarm.
 
     Args:
-        upcoming_alarms (list): A list of the upcoming alarms.
+        alarm_cancel (str): The alarm which the user wants to cancel.
     """
 
-    # Gets the time for the alarm to cancel.
-    alarm_cancel = request.args.get("cancel_alarm")
-
     # Cancels the inputted alarm from the queue and removes it from list.
-    if alarm_cancel:
-        alarm_cancel_epoch = time.strptime(alarm_cancel, "%Y-%m-%dT%H:%M")
-        alarm_cancel_epoch = time.mktime(alarm_cancel_epoch)
-        for event in alarm.queue:
-            epoch = event[0]
-            if epoch == alarm_cancel_epoch:
-                index = alarm.queue.index(event)
-                del upcoming_alarms[index]
-                alarm.cancel(event)
+    alarm_cancel_epoch = time.strptime(alarm_cancel, "%Y-%m-%dT%H:%M")
+    alarm_cancel_epoch = time.mktime(alarm_cancel_epoch)
+    for event in alarm.queue:
+        epoch = event[0]
+        if epoch == alarm_cancel_epoch:
+            index = alarm.queue.index(event)
+            del upcoming_alarms[index]
+            alarm.cancel(event)
 
 
 # Prevents the code from executing when the script is imported as a module.
