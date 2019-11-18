@@ -43,7 +43,7 @@ def main() -> str:
     headlines = get_news(api_keys, location)
 
     # Enables alarm functionality.
-    upcoming_alarms = set_alarm()
+    get_alarm_inputs()
     cancel_alarm()
 
     # Returns the variables to the HTML file to render webpage.
@@ -232,7 +232,7 @@ def get_news(api_keys: dict, location: dict) -> str:
     return headlines
 
 
-def alert_alarm(alarm_time: str, alarm_label: str, alarm_repeat: str):
+def alert_alarm(alarm_time: str, alarm_label: str, alarm_repeat: str) -> list:
     """
     Alerts the user when their alarm is going off.
 
@@ -265,31 +265,15 @@ def alert_alarm(alarm_time: str, alarm_label: str, alarm_repeat: str):
         alarm_time = time.strftime(
             "%Y-%m-%dT%H:%M", time.localtime(format_time))
 
-        # Activates new alarm to alert at given time.
-        alarm.enterabs(format_time, 1, alert_alarm, argument=(alarm_time,
-                                                              alarm_label,
-                                                              alarm_repeat))
-
-        # Combines the alarm time and the alarm label for display.
-        alarm_input = (alarm_time.replace("T", " ") + " " + alarm_label +
-                       " (" + alarm_repeat + ")")
-
-        # Adds alarm to the list of alarms and sorts them chronologically.
-        upcoming_alarms.append(alarm_input)
-        upcoming_alarms = sorted(upcoming_alarms)
+        set_alarm(alarm_time, alarm_label, alarm_repeat, format_time)
 
     return upcoming_alarms
 
 
-def set_alarm() -> list:
+def get_alarm_inputs():
     """
-    Allows the user to set an alarm.
-
-    Returns:
-        upcoming_alarms (list): A list of the upcoming alarms.
+    Gets the alarm inputs from the forms in the webpage.
     """
-
-    global upcoming_alarms
 
     # Gets the alarm time from the new alarm input box and calculates delay.
     alarm_time = request.args.get("alarm")
@@ -302,21 +286,40 @@ def set_alarm() -> list:
         format_time = time.strptime(alarm_time, "%Y-%m-%dT%H:%M")
         format_time = time.mktime(format_time)
 
-        # Activates new alarm to alert at given time.
-        alarm.enterabs(format_time, 1, alert_alarm, argument=(alarm_time,
-                                                              alarm_label,
-                                                              alarm_repeat,))
+        set_alarm(alarm_time, alarm_label, alarm_repeat, format_time)
 
-        # Combines the alarm time and the alarm label for display.
-        if alarm_repeat:
-            alarm_input = (alarm_time.replace("T", " ") + " " + alarm_label +
-                           " (" + alarm_repeat + ")")
-        else:
-            alarm_input = (alarm_time.replace("T", " ") + " " + alarm_label)
 
-        # Adds alarm to the list of alarms and sorts them chronologically.
-        upcoming_alarms.append(alarm_input)
-        upcoming_alarms = sorted(upcoming_alarms)
+def set_alarm(alarm_time: str, alarm_label: str, alarm_repeat: str,
+              format_time: float) -> list:
+    """
+    Sets a new alarm according to the inputs of the user.
+
+    Args:
+        alarm_time (str): The date and time of the alarm.
+        alarm_label (str): The label of the alarm.
+        alarm_repeat (str): Whether the alarm repeats or not.
+
+    Returns:
+        upcoming_alarms (list): A list of the upcoming alarms.
+    """
+
+    global upcoming_alarms
+
+    # Activates new alarm to alert at given time.
+    alarm.enterabs(format_time, 1, alert_alarm, argument=(alarm_time,
+                                                          alarm_label,
+                                                          alarm_repeat,))
+
+    # Combines the alarm time and the alarm label for display.
+    if alarm_repeat:
+        alarm_input = (alarm_time.replace("T", " ") + " " + alarm_label +
+                       " (" + alarm_repeat + ")")
+    else:
+        alarm_input = (alarm_time.replace("T", " ") + " " + alarm_label)
+
+    # Adds alarm to the list of alarms and sorts them chronologically.
+    upcoming_alarms.append(alarm_input)
+    upcoming_alarms = sorted(upcoming_alarms)
 
     return upcoming_alarms
 
