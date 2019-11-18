@@ -39,7 +39,7 @@ def main():
     headlines = get_news(api_keys, location)
 
     # Enables alarm functionality.
-    upcoming_alarms, displayed_alarms = set_alarm()
+    upcoming_alarms = set_alarm()
     cancel_alarm()
 
     # Returns the variables to the HTML file to render webpage.
@@ -48,8 +48,7 @@ def main():
                            forecast=forecast, temp=temp,
                            max_temp=max_temp, min_temp=min_temp, wind=wind,
                            headlines=headlines,
-                           upcoming_alarms=upcoming_alarms,
-                           displayed_alarms=displayed_alarms)
+                           upcoming_alarms=upcoming_alarms)
 
 
 def parse_configs() -> dict:
@@ -206,6 +205,9 @@ def alert_alarm(alarm_time: str, alarm_label: str, alarm_repeat: str):
         alarm_time (str): The date and time of the alarm.
         alarm_label (str): The label of the alarm.
         alarm_repeat (str): Whether the alarm repeats or not.
+
+    Returns:
+        upcoming_alarms (list): A list of the upcoming alarms.
     """
 
     global upcoming_alarms
@@ -221,16 +223,24 @@ def alert_alarm(alarm_time: str, alarm_label: str, alarm_repeat: str):
     upcoming_alarms.pop(0)
 
     if alarm_repeat:
-        new_date = int(alarm_time[8:10]) + 1
-        alarm_time = alarm_time[:8] + str(new_date) + alarm_time[10:]
-
         format_time = time.strptime(alarm_time, "%Y-%m-%dT%H:%M")
         format_time = time.mktime(format_time)
+        format_time += 30
 
         # Activates new alarm to alert at given time.
         alarm.enterabs(format_time, 1, alert_alarm, argument=(alarm_time,
                                                               alarm_label,
                                                               alarm_repeat))
+
+        # Combines the alarm time and the alarm label for display.
+        alarm_input = (alarm_time.replace("T", " ") + " " + alarm_label +
+                       " (" + alarm_repeat + ")")
+
+        # Adds alarm to the list of alarms and sorts them chronologically.
+        upcoming_alarms.append(alarm_input)
+        upcoming_alarms = sorted(upcoming_alarms)
+
+    return upcoming_alarms
 
 
 def set_alarm() -> list:
@@ -239,7 +249,6 @@ def set_alarm() -> list:
 
     Returns:
         upcoming_alarms (list): A list of the upcoming alarms.
-        displayed_alarms (str): A string list of upcoming alarms to display.
     """
 
     global upcoming_alarms
@@ -272,11 +281,7 @@ def set_alarm() -> list:
         upcoming_alarms.append(alarm_input)
         upcoming_alarms = sorted(upcoming_alarms)
 
-    """# Creates the displayed list of alarms.
-    for alarm_input in upcoming_alarms:
-        displayed_alarms += "\n" + alarm_input"""
-
-    return upcoming_alarms, displayed_alarms
+    return upcoming_alarms
 
 
 def cancel_alarm():
@@ -290,7 +295,7 @@ def cancel_alarm():
     # Gets the time for the alarm to cancel.
     alarm_cancel = request.args.get("cancel_alarm")
 
-    # Cancels the inputted alarm from the queue.
+    # Cancels the inputted alarm from the queue and removes it from list.
     if alarm_cancel:
         alarm_cancel_epoch = time.strptime(alarm_cancel, "%Y-%m-%dT%H:%M")
         alarm_cancel_epoch = time.mktime(alarm_cancel_epoch)
