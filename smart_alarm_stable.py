@@ -36,14 +36,14 @@ def main():
     """
 
     # Sets up the API keys and file paths, then starts logging.
-    api_keys, file_paths = parse_configs()
+    api_keys, file_paths, location = parse_configs()
     setup_logging(file_paths)
 
     # Updates weather and news, and shows the last updated time.
     current_datetime = last_updated()
-    forecast, temp, max_temp, min_temp, wind = get_weather(api_keys)
+    forecast, temp, max_temp, min_temp, wind = get_weather(api_keys, location)
     (headline1, headline2, headline3, headline4, headline5, headline6,
-     headline7, headline8, headline9, headline10) = get_news(api_keys)
+     headline7, headline8, headline9, headline10) = get_news(api_keys, location)
 
     # Enables alarm functionality.
     upcoming_alarms, displayed_alarms = set_alarm()
@@ -73,6 +73,7 @@ def parse_configs() -> dict:
     Returns:
         api_keys (dict): Stores the API keys for weather and news data.
         file_paths (dict): Stores the file path for logging.
+        location (dict): Stores the location to enable local news and weather.
     """
 
     # Loads the config file and finds the API keys.
@@ -80,8 +81,9 @@ def parse_configs() -> dict:
         config = json.load(file)
     api_keys = config["api_keys"]
     file_paths = config["file_paths"]
+    location = config["location"]
 
-    return api_keys, file_paths
+    return api_keys, file_paths, location
 
 
 def setup_logging(file_paths: dict):
@@ -152,12 +154,13 @@ def get_notifications(new_notification: str):
             notification5)
 
 
-def get_weather(api_keys: dict) -> str:
+def get_weather(api_keys: dict, location: dict) -> str:
     """
     Gets the weather forecast summary.
 
     Args:
         api_keys (dict): Stores the API keys for weather and news data.
+        location (dict): Stores the location to enable local news and weather.
 
     Returns:
         forecast (str): Displays type of weather forecast.
@@ -169,9 +172,9 @@ def get_weather(api_keys: dict) -> str:
 
     # Gets the API for weather data on user's city.
     weather_key = api_keys["weather"]
+    city = location["city"]
     weather_api = ("https://api.openweathermap.org/data/2.5/weather?"
-                   "q=exeter&appid=8bb8c8c3507631f11bb9599e7795a718"
-                   "&units=metric").format(weather_key)
+                   "q={}&appid={}&units=metric").format(city, weather_key)
 
     # Gets weather data using the weather API.
     raw_weather = requests.get(weather_api)
@@ -188,12 +191,13 @@ def get_weather(api_keys: dict) -> str:
     return forecast, temp, max_temp, min_temp, wind
 
 
-def get_news(api_keys: dict) -> str:
+def get_news(api_keys: dict, location: dict) -> str:
     """
     Gets the news headlines.
 
     Args:
         api_keys (dict): Stores the API keys for weather and news data.
+        location (dict): Stores the location to enable local news and weather.
 
     Returns:
         headline# (str): Stores the numbered headline (depending on #).
@@ -201,8 +205,9 @@ def get_news(api_keys: dict) -> str:
 
     # Gets latest news using the news API.
     news_key = api_keys["news"]
+    country = location["country"]
     news_api = ("https://newsapi.org/v2/top-headlines?"
-                "country=gb&apiKey={}").format(news_key)
+                "country={}&apiKey={}").format(country, news_key)
 
     # Gets news using the news API.
     raw_news = requests.get(news_api)
@@ -297,9 +302,9 @@ def set_alarm() -> list:
         upcoming_alarms.append(alarm_input)
         upcoming_alarms = sorted(upcoming_alarms)
 
-        # Creates the displayed list of alarms.
-        for alarm_input in upcoming_alarms:
-            displayed_alarms += "\n" + alarm_input
+    # Creates the displayed list of alarms.
+    for alarm_input in upcoming_alarms:
+        displayed_alarms += "\n" + alarm_input
 
     return upcoming_alarms, displayed_alarms
 
