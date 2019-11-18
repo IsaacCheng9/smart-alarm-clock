@@ -234,12 +234,12 @@ def alert_alarm(alarm_time: str, alarm_label: str, alarm_repeat: str):
         alarm_label (str): The label associated with the alarm.
     """
 
-    # Alert user about their alarm via voiceover.
+    # Alerts user about their alarm via voiceover.
     text_to_speech = pyttsx3.init()
     text_to_speech.say(("Your alarm label", alarm_label, "is going off."))
     text_to_speech.runAndWait()
 
-    # Alert user about their alarm via notifications.
+    # Alerts user about their alarm via notifications.
     print("\nYour alarm with label", alarm_label, "is going off!")
     get_notifications("Alarm with label", alarm_label, "is going off!")
 
