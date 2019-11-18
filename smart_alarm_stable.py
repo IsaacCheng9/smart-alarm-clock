@@ -232,8 +232,9 @@ def alert_alarm(alarm_time: str, alarm_label: str, alarm_repeat: str):
     Alerts the user when their alarm is going off.
 
     Args:
-        
-        alarm_label (str): The label associated with the alarm.
+        alarm_time (str): The date and time of the alarm.
+        alarm_label (str): The label of the alarm.
+        alarm_repeat (str): Whether the alarm repeats or not.
     """
 
     # Alerts user about their alarm via voiceover.
