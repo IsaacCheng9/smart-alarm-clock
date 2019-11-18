@@ -14,14 +14,16 @@ import pyttsx3
 import requests
 from flask import Flask, render_template, request
 
-upcoming_alarms = []
-upcoming_alarms_labels = []
 notifications = []
 notification1 = ""
 notification2 = ""
 notification3 = ""
 notification4 = ""
 notification5 = ""
+
+upcoming_alarms = []
+upcoming_alarms_labels = []
+display_alarms = ""
 
 # Initialises Flask for web interface and the scheduler for the alarm.
 app = Flask(__name__)
@@ -35,16 +37,23 @@ def main():
     summary.
     """
 
+    # Sets up the API keys and file paths, then starts logging.
     api_keys, file_paths = parse_configs()
     setup_logging(file_paths)
+
+    # Updates weather and news, and shows the last updated time.
     current_datetime = last_updated()
     forecast, temp, max_temp, min_temp, wind = get_weather(api_keys)
     (headline1, headline2, headline3, headline4, headline5, headline6,
      headline7, headline8, headline9, headline10) = get_news(api_keys)
-    alarm_time, alarm_label, alarm_repeat = get_alarm()
+
+    # Enables alarm functionality.
+    alarm_time, alarm_label, alarm_repeat, format_time = get_alarm()
     upcoming_alarms, displayed_alarms = set_alarm(alarm_time, alarm_label,
-                                                  alarm_repeat)
+                                                  alarm_repeat, format_time)
     cancel_alarm()
+
+    # Returns the variables to the HTML file to render webpage.
     return render_template("home.html", current_datetime=current_datetime,
                            notification1=notification1,
                            notification2=notification2,
@@ -225,15 +234,21 @@ def alert_alarm(alarm_time: str, alarm_label: str, alarm_repeat: str):
         alarm_label (str): The label associated with the alarm.
     """
 
+    # Alert user about their alarm via voiceover.
     text_to_speech = pyttsx3.init()
     text_to_speech.say(("Your alarm label", alarm_label, "is going off."))
     text_to_speech.runAndWait()
+
+    # Alert user about their alarm via notifications.
     print("\nYour alarm with label", alarm_label, "is going off!")
+    get_notifications("Alarm with label", alarm_label, "is going off!")
 
     if alarm_repeat:
-        new_date = int(alarm_time[8:10]) + 1
+        """new_date = int(alarm_time[8:10]) + 1
         alarm_time = alarm_time[:8] + str(new_date) + alarm_time[10:]
-        set_alarm(alarm_time, alarm_label, alarm_repeat)
+        set_alarm(alarm_time, alarm_label, alarm_repeat)"""
+
+        set_alarm(alarm_time, alarm_label, alarm_repeat, format_time)
 
         # return alarm_time, alarm_label, alarm_repeat
 
@@ -246,6 +261,7 @@ def get_alarm() -> str:
         alarm_time (str): The date and time of the alarm.
         alarm_label (str): The label of the alarm.
         alarm_repeat (str): Whether the alarm repeats or not.
+        format_time (float): Enoch time formatted version of alarm_time.
     """
 
     # Gets the alarm time from the new alarm input box and calculates delay.
@@ -254,10 +270,16 @@ def get_alarm() -> str:
     alarm_repeat = request.args.get("alarm_repeat")
     alarm.run(blocking=False)
 
-    return alarm_time, alarm_label, alarm_repeat
+    # Converts from input box time format to epoch time format.
+    if alarm_time:
+        format_time = time.strptime(alarm_time, "%Y-%m-%dT%H:%M")
+        format_time = time.mktime(format_time)
+
+    return alarm_time, alarm_label, alarm_repeat, format_time
 
 
-def set_alarm(alarm_time: str, alarm_label: str, alarm_repeat: str) -> list:
+def set_alarm(alarm_time: str, alarm_label: str, alarm_repeat: str,
+              format_time: float) -> list:
     """
     Allows the user to set an alarm.
 
@@ -274,33 +296,26 @@ def set_alarm(alarm_time: str, alarm_label: str, alarm_repeat: str) -> list:
     global upcoming_alarms, upcoming_alarms_labels
     displayed_alarms = ""
 
-    # Converts from input box time format to epoch time format.
-    if alarm_time:
-        format_time = time.strptime(alarm_time, "%Y-%m-%dT%H:%M")
-        print(format_time)
-        format_time = time.mktime(format_time)
+    # Activates new alarm to alert at given time.
+    alarm.enterabs(format_time, 1, alert_alarm, argument=(alarm_time,
+                                                          alarm_label,
+                                                          alarm_repeat,))
 
-        # Activates new alarm to alert at given time.
-        alarm.enterabs(format_time, 1, alert_alarm, argument=(alarm_time,
-                                                              alarm_label,
-                                                              alarm_repeat,))
-        print(alarm.queue)
+    # Combines the alarm time and the alarm label for display in webpage.
+    if alarm_repeat:
+        alarm_input = (alarm_time.replace("T", " ") + " " + alarm_label +
+                       " (" + alarm_repeat + ")")
+    else:
+        alarm_input = (alarm_time.replace("T", " ") + " " + alarm_label)
 
-        # Combines the alarm time and the alarm label for display.
-        if alarm_repeat:
-            alarm_input = (alarm_time.replace("T", " ") + " " + alarm_label +
-                           " (" + alarm_repeat + ")")
-        else:
-            alarm_input = (alarm_time.replace("T", " ") + " " + alarm_label)
+    # Adds alarm to the list of alarms and sorts them chronologically.
+    upcoming_alarms.append(alarm_input)
+    upcoming_alarms = sorted(upcoming_alarms)
 
-        # Adds alarm to the list of alarms and sorts them chronologically.
-        upcoming_alarms.append(alarm_input)
-        upcoming_alarms = sorted(upcoming_alarms)
-
-        # Creates the displayed list of alarms.
-        for alarm_input in upcoming_alarms:
-            if alarm_input not in displayed_alarms:
-                displayed_alarms += "\n" + alarm_input
+    # Creates the displayed list of alarms.
+    for alarm_input in upcoming_alarms:
+        if alarm_input not in displayed_alarms:
+            displayed_alarms += "\n" + alarm_input
 
     # get_notifications("A new alarm has been added.")
 
@@ -326,7 +341,6 @@ def cancel_alarm():
                 alarm.cancel(event)
                 get_notifications(
                     "Your alarm has successfully been cancelled.")
-            print(alarm.queue)
 
 
 # Prevents the code from executing when the script is imported as a module.
