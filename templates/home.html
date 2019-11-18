@@ -12,18 +12,10 @@
 <body>Last Updated: {{ current_datetime }}</body>
 
 <h3>Notifications</h3>
-<p>
-    {{ notification1 }}
-    <br>
-    {{ notification2 }}
-    <br>
-    {{ notification3 }}
-    <br>
-    {{ notification4 }}
-    <br>
-    {{ notification5 }}
-    <br>
-</p>
+{% for notification in notifications %}
+{{ notification }}
+<br>
+{% endfor %}
 
 <h3>Current Weather</h3>
 <p>
@@ -35,30 +27,16 @@
 </p>
 
 <h3>Headlines for Today</h3>
-<p>
-    #1: {{ headline1 }}
-    <br>
-    #2: {{ headline2 }}
-    <br>
-    #3: {{ headline3 }}
-    <br>
-    #4: {{ headline4 }}
-    <br>
-    #5: {{ headline5 }}
-    <br>
-    #6: {{ headline6 }}
-    <br>
-    #7: {{ headline7 }}
-    <br>
-    #8: {{ headline8 }}
-    <br>
-    #9: {{ headline9 }}
-    <br>
-    #10: {{ headline10 }}
-</p>
+{% for headline in headlines %}
+{{ headline }}
+<br>
+{% endfor %}
 
 <h3>Upcoming Alarms</h3>
-{{ displayed_alarms }}
+{% for alarm in upcoming_alarms %}
+{{ alarm }}
+<br>
+{% endfor %}
 
 <h3>Set an Alarm</h3>
 <form action="/" method="get">
