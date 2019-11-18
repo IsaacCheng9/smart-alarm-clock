@@ -222,10 +222,15 @@ def alert_alarm(alarm_time: str, alarm_label: str, alarm_repeat: str):
 
     upcoming_alarms.pop(0)
 
+    # Repeats the alarm for the next day if repeating alarm option is set.
     if alarm_repeat:
         format_time = time.strptime(alarm_time, "%Y-%m-%dT%H:%M")
         format_time = time.mktime(format_time)
-        format_time += 30
+        format_time += 86400
+
+        # Converts back from epoch time to datetime.
+        alarm_time = time.strftime(
+            "%Y-%m-%dT%H:%M", time.localtime(format_time))
 
         # Activates new alarm to alert at given time.
         alarm.enterabs(format_time, 1, alert_alarm, argument=(alarm_time,
