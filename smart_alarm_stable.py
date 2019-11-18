@@ -35,15 +35,27 @@ def main():
     summary.
     """
 
+    # Sets up the API keys and file paths, then starts logging.
     api_keys, file_paths = parse_configs()
     setup_logging(file_paths)
+
+    # Updates weather and news, and shows the last updated time.
     current_datetime = last_updated()
     forecast, temp, max_temp, min_temp, wind = get_weather(api_keys)
     (headline1, headline2, headline3, headline4, headline5, headline6,
      headline7, headline8, headline9, headline10) = get_news(api_keys)
+
+    # Enables alarm functionality.
     upcoming_alarms, displayed_alarms = set_alarm()
     cancel_alarm()
+
+    # Returns the variables to the HTML file to render webpage.
     return render_template("home.html", current_datetime=current_datetime,
+                           notification1=notification1,
+                           notification2=notification2,
+                           notification3=notification3,
+                           notification4=notification4,
+                           notification5=notification5,
                            forecast=forecast, temp=temp,
                            max_temp=max_temp, min_temp=min_temp, wind=wind,
                            headline1=headline1, headline2=headline2,
@@ -81,8 +93,10 @@ def setup_logging(file_paths: dict):
         file_paths (dict): Stores the file path for logging.
     """
 
+    # Gets the log file from the configuration file.
     log_file = file_paths["logging"]
 
+    # Starts the logging system.
     logging.basicConfig(filename=log_file, level=logging.DEBUG,
                         format="%(asctime)s - %(levelname)s - %(message)s")
     logging.debug("Smart alarm clock started.")
@@ -96,6 +110,7 @@ def last_updated() -> datetime:
         current_datetime (datetime): Displays the last time data was updated.
     """
 
+    # Gets the current datetime to show when the webpage was last updated.
     current_datetime = datetime.now().strftime(
         "%Y-%m-%d %H:%M:%S")
     print("Last Updated:\n    ", current_datetime)
@@ -153,9 +168,6 @@ def get_weather(api_keys: dict) -> str:
     """
 
     # Gets the API for weather data on user's city.
-    """weather_api = ("https://api.openweathermap.org/data/2.5/weather?"
-                   "q={}&appid=8bb8c8c3507631f11bb9599e7795a718"
-                   "&units=metric").format(city)"""
     weather_key = api_keys["weather"]
     weather_api = ("https://api.openweathermap.org/data/2.5/weather?"
                    "q=exeter&appid=8bb8c8c3507631f11bb9599e7795a718"
@@ -170,12 +182,7 @@ def get_weather(api_keys: dict) -> str:
     min_temp = str(weather["main"]["temp_min"])
     wind = str(weather["wind"]["speed"])
 
-    """# Prints a weather forecast summary.
-    print("\nWeather Forecast:\n    " + forecast,
-          "with an average temperature of", temp +
-          "°C.\n    Temperature highs of", max_temp + "°C and lows of",
-          min_temp + "°C.\n    Wind speeds of", wind, "m/s.")"""
-
+    # Adds notification that weather was updated.
     get_notifications("Weather has been updated.")
 
     return forecast, temp, max_temp, min_temp, wind
@@ -213,6 +220,7 @@ def get_news(api_keys: dict) -> str:
     headline9 = str(news["articles"][8]["title"])
     headline10 = str(news["articles"][9]["title"])
 
+    # Adds notification that news was updated.
     get_notifications("News has been updated.")
 
     return (headline1, headline2, headline3, headline4, headline5, headline6,
@@ -224,12 +232,16 @@ def alert_alarm(alarm_time: str, alarm_label: str, alarm_repeat: str):
     Alerts the user when their alarm is going off.
 
     Args:
+        
         alarm_label (str): The label associated with the alarm.
     """
 
+    # Alerts user about their alarm via voiceover.
     text_to_speech = pyttsx3.init()
     text_to_speech.say(("Your alarm with label", alarm_label, "is going off."))
     text_to_speech.runAndWait()
+
+    # Prints when alarm is going off in console for debugging purposes.
     print("\nYour alarm with label", alarm_label, "is going off!")
 
     if alarm_repeat:
@@ -250,7 +262,8 @@ def set_alarm() -> list:
     Allows the user to set an alarm.
 
     Returns:
-        upcoming_alarms (list): A  list of the upcoming alarms.
+        upcoming_alarms (list): A list of the upcoming alarms.
+        displayed_alarms (str): A string list of upcoming alarms to display.
     """
 
     global upcoming_alarms, upcoming_alarms_labels
@@ -265,7 +278,6 @@ def set_alarm() -> list:
     # Converts from input box time format to epoch time format.
     if alarm_time:
         format_time = time.strptime(alarm_time, "%Y-%m-%dT%H:%M")
-        print(format_time)
         format_time = time.mktime(format_time)
 
         # Activates new alarm to alert at given time.
@@ -299,8 +311,10 @@ def cancel_alarm():
         upcoming_alarms (str): A list of the upcoming alarms.
     """
 
+    # Gets the time for the alarm to cancel.
     alarm_cancel = request.args.get("cancel_alarm")
 
+    # Cancels the inputted alarm from the queue.
     if alarm_cancel:
         alarm_cancel_epoch = time.strptime(alarm_cancel, "%Y-%m-%dT%H:%M")
         alarm_cancel_epoch = time.mktime(alarm_cancel_epoch)
@@ -308,7 +322,6 @@ def cancel_alarm():
             epoch = event[0]
             if epoch == alarm_cancel_epoch:
                 alarm.cancel(event)
-            print(alarm.queue)
 
 
 # Prevents the code from executing when the script is imported as a module.
