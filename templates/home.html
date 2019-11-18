@@ -11,9 +11,15 @@
 
 <body>Last Updated: {{ current_datetime }}</body>
 
-<h3>Notifications</h3>
-{% for notification in notifications %}
-{{ notification }}
+<h3>Weather Notifications</h3>
+{% for weather_notification in weather_notifications %}
+{{ weather_notification }}
+<br>
+{% endfor %}
+
+<h3>News Notifications</h3>
+{% for news_notification in news_notifications %}
+{{ news_notification }}
 <br>
 {% endfor %}
 
@@ -44,7 +50,7 @@
     <br>
     Alarm Label: <input type="text" name="alarm_label">
     <br>
-    Repeating: <input type="checkbox" name="alarm_repeat" value="repeating">
+    Repeat Daily: <input type="checkbox" name="alarm_repeat" value="repeating">
     <input type="submit">
 </form>
 

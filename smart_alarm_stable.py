@@ -15,7 +15,11 @@ import requests
 from flask import Flask, render_template, request
 
 upcoming_alarms = []
-notifications = []
+news_notifications = []
+weather_notifications = []
+old_headlines = []
+old_forecast = ""
+old_temp = ""
 
 # Initialises Flask for web interface and the scheduler for the alarm.
 app = Flask(__name__)
@@ -23,7 +27,7 @@ alarm = sched.scheduler(time.time, time.sleep)
 
 
 @app.route("/")
-def main():
+def main() -> str:
     """
     Shows the current time, the latest news headlines, and a weather forecast
     summary.
@@ -44,7 +48,8 @@ def main():
 
     # Returns the variables to the HTML file to render webpage.
     return render_template("home.html", current_datetime=current_datetime,
-                           notifications=notifications,
+                           weather_notifications=weather_notifications,
+                           news_notifications=news_notifications,
                            forecast=forecast, temp=temp,
                            max_temp=max_temp, min_temp=min_temp, wind=wind,
                            headlines=headlines,
@@ -105,23 +110,31 @@ def last_updated() -> datetime:
     return current_datetime
 
 
-def get_notifications(new_notification: str):
+def get_notifications(notification_type: str, new_notification: str):
     """
     Adds notifications as news, weather, or alarms are changed.
 
+
     Args:
+        notification_type (str): Stores the type of notification for
+                                 categorisation.
         new_notification (str): Stores the new notification to be added.
 
     Returns:
         notifications (list): Stores a list of notifications to be displayed.
     """
 
-    # Adds a new notification to the notification list with a timestamp.
+    # Adds a timestamp to new notifications.
     notification_input = (datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ": "
                           + new_notification)
-    notifications.insert(0, notification_input)
 
-    return notifications
+    # Adds notification to the relevant notification category list.
+    if notification_type == "News":
+        news_notifications.insert(0, notification_input)
+    elif notification_type == "Weather":
+        weather_notifications.insert(0, notification_input)
+
+    return news_notifications, weather_notifications
 
 
 def get_weather(api_keys: dict, location: dict) -> str:
@@ -140,6 +153,8 @@ def get_weather(api_keys: dict, location: dict) -> str:
         wind (str): Displays average wind speed for weather forecast.
     """
 
+    global old_forecast, old_temp
+
     # Gets the API for weather data on user's city.
     weather_key = api_keys["weather"]
     city = location["city"]
@@ -155,8 +170,20 @@ def get_weather(api_keys: dict, location: dict) -> str:
     min_temp = str(weather["main"]["temp_min"])
     wind = str(weather["wind"]["speed"])
 
-    # Adds notification that weather was updated.
-    get_notifications("Weather has been updated.")
+    # Adds notification if forecast or temperature changes, stating the change.
+    if forecast != old_forecast:
+        new_forecast = (
+            "The weather forecast has changed. It is now " + forecast.lower()
+            + ".")
+        get_notifications("Weather", new_forecast)
+    if temp != old_temp:
+        new_temp = ("The current temperature has changed. It is now " +
+                    temp + "°C.")
+        get_notifications("Weather", new_temp)
+
+    # Sets forecast and temperature as old values to check for changes.
+    old_forecast = forecast
+    old_temp = temp
 
     return forecast, temp, max_temp, min_temp, wind
 
@@ -172,6 +199,8 @@ def get_news(api_keys: dict, location: dict) -> str:
     Returns:
         headlines (list): Stores the list of headlines to be displayed.
     """
+
+    global old_headlines
 
     # Declares list of headlines to be displayed.
     headlines = []
@@ -191,8 +220,14 @@ def get_news(api_keys: dict, location: dict) -> str:
         headline = "#" + str(i + 1) + ": " + str(news["articles"][i]["title"])
         headlines.append(headline)
 
-    # Adds notification that news was updated.
-    get_notifications("News has been updated.")
+    # Adds notification that news was updated, specifying the new headline.
+    for headline in headlines:
+        if headline not in old_headlines:
+            new_headline = ("A new headline has been added: " + headline)
+            get_notifications("News", new_headline)
+
+    # Adds the headlines to the old headlines list to check for new headlines.
+    old_headlines = headlines
 
     return headlines
 
@@ -217,10 +252,8 @@ def alert_alarm(alarm_time: str, alarm_label: str, alarm_repeat: str):
     text_to_speech.say(("Your alarm with label", alarm_label, "is going off."))
     text_to_speech.runAndWait()
 
-    # Prints when alarm is going off in console for debugging purposes.
-    print("\nYour alarm with label", alarm_label, "is going off!")
-
-    upcoming_alarms.pop(0)
+    # Deletes the alarm from the alarms list.
+    del upcoming_alarms[0]
 
     # Repeats the alarm for the next day if repeating alarm option is set.
     if alarm_repeat:
@@ -257,7 +290,6 @@ def set_alarm() -> list:
     """
 
     global upcoming_alarms
-    displayed_alarms = ""
 
     # Gets the alarm time from the new alarm input box and calculates delay.
     alarm_time = request.args.get("alarm")
