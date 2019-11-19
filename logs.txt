@@ -29,3 +29,53 @@
 2019-11-19 01:37:04,458 - DEBUG - https://newsapi.org:443 "GET /v2/top-headlines?country=gb&apiKey=86a97a39f14a4a1eac894868d7b9726c HTTP/1.1" 200 12132
 2019-11-19 01:37:08,389 - INFO - 127.0.0.1 - - [19/Nov/2019 01:37:08] "GET / HTTP/1.1" 200 -
 2019-11-19 01:37:30,835 - INFO -  * Detected change in 'C:\\Users\\isaac\\OneDrive\\Documents\\University\\Computer Science\\Programming\\Coursework\\smart-alarm-clock\\smart_alarm.py', reloading
+2019-11-19 11:24:39,459 - DEBUG - Smart alarm clock refreshed.
+2019-11-19 11:24:39,467 - DEBUG - Starting new HTTPS connection (1): api.openweathermap.org:443
+2019-11-19 11:24:39,631 - DEBUG - https://api.openweathermap.org:443 "GET /data/2.5/weather?q=exeter&appid=8bb8c8c3507631f11bb9599e7795a718&units=metric HTTP/1.1" 200 440
+2019-11-19 11:24:39,639 - DEBUG - Starting new HTTPS connection (1): newsapi.org:443
+2019-11-19 11:24:40,128 - DEBUG - https://newsapi.org:443 "GET /v2/top-headlines?country=gb&apiKey=86a97a39f14a4a1eac894868d7b9726c HTTP/1.1" 200 11425
+2019-11-19 11:24:40,172 - INFO - 127.0.0.1 - - [19/Nov/2019 11:24:40] "GET / HTTP/1.1" 200 -
+2019-11-19 11:25:10,344 - DEBUG - Smart alarm clock refreshed.
+2019-11-19 11:25:10,364 - DEBUG - Starting new HTTPS connection (1): api.openweathermap.org:443
+2019-11-19 11:25:10,530 - DEBUG - https://api.openweathermap.org:443 "GET /data/2.5/weather?q=exeter&appid=8bb8c8c3507631f11bb9599e7795a718&units=metric HTTP/1.1" 200 440
+2019-11-19 11:25:10,542 - DEBUG - Starting new HTTPS connection (1): newsapi.org:443
+2019-11-19 11:25:11,045 - DEBUG - https://newsapi.org:443 "GET /v2/top-headlines?country=gb&apiKey=86a97a39f14a4a1eac894868d7b9726c HTTP/1.1" 200 11425
+2019-11-19 11:25:11,057 - INFO - 127.0.0.1 - - [19/Nov/2019 11:25:11] "GET / HTTP/1.1" 200 -
+2019-11-19 11:25:41,145 - DEBUG - Smart alarm clock refreshed.
+2019-11-19 11:25:41,153 - DEBUG - Starting new HTTPS connection (1): api.openweathermap.org:443
+2019-11-19 11:25:41,249 - DEBUG - https://api.openweathermap.org:443 "GET /data/2.5/weather?q=exeter&appid=8bb8c8c3507631f11bb9599e7795a718&units=metric HTTP/1.1" 200 440
+2019-11-19 11:25:41,253 - DEBUG - Starting new HTTPS connection (1): newsapi.org:443
+2019-11-19 11:25:41,749 - DEBUG - https://newsapi.org:443 "GET /v2/top-headlines?country=gb&apiKey=86a97a39f14a4a1eac894868d7b9726c HTTP/1.1" 200 11425
+2019-11-19 11:25:41,753 - INFO - 127.0.0.1 - - [19/Nov/2019 11:25:41] "GET / HTTP/1.1" 200 -
+2019-11-19 11:26:11,823 - DEBUG - Smart alarm clock refreshed.
+2019-11-19 11:26:11,835 - DEBUG - Starting new HTTPS connection (1): api.openweathermap.org:443
+2019-11-19 11:26:11,971 - DEBUG - https://api.openweathermap.org:443 "GET /data/2.5/weather?q=exeter&appid=8bb8c8c3507631f11bb9599e7795a718&units=metric HTTP/1.1" 200 440
+2019-11-19 11:26:11,975 - DEBUG - Starting new HTTPS connection (1): newsapi.org:443
+2019-11-19 11:26:12,488 - DEBUG - https://newsapi.org:443 "GET /v2/top-headlines?country=gb&apiKey=86a97a39f14a4a1eac894868d7b9726c HTTP/1.1" 200 11425
+2019-11-19 11:26:12,504 - INFO - 127.0.0.1 - - [19/Nov/2019 11:26:12] "GET / HTTP/1.1" 200 -
+2019-11-19 11:26:43,261 - DEBUG - Smart alarm clock refreshed.
+2019-11-19 11:26:43,269 - DEBUG - Starting new HTTPS connection (1): api.openweathermap.org:443
+2019-11-19 11:26:43,381 - DEBUG - https://api.openweathermap.org:443 "GET /data/2.5/weather?q=exeter&appid=8bb8c8c3507631f11bb9599e7795a718&units=metric HTTP/1.1" 200 440
+2019-11-19 11:26:43,385 - DEBUG - Starting new HTTPS connection (1): newsapi.org:443
+2019-11-19 11:26:43,876 - DEBUG - https://newsapi.org:443 "GET /v2/top-headlines?country=gb&apiKey=86a97a39f14a4a1eac894868d7b9726c HTTP/1.1" 200 11425
+2019-11-19 11:26:43,879 - INFO - 127.0.0.1 - - [19/Nov/2019 11:26:43] "GET / HTTP/1.1" 200 -
+2019-11-19 11:27:14,256 - DEBUG - Smart alarm clock refreshed.
+2019-11-19 11:27:14,260 - DEBUG - Starting new HTTPS connection (1): api.openweathermap.org:443
+2019-11-19 11:27:14,377 - DEBUG - https://api.openweathermap.org:443 "GET /data/2.5/weather?q=exeter&appid=8bb8c8c3507631f11bb9599e7795a718&units=metric HTTP/1.1" 200 440
+2019-11-19 11:27:14,381 - DEBUG - Starting new HTTPS connection (1): newsapi.org:443
+2019-11-19 11:27:14,911 - DEBUG - https://newsapi.org:443 "GET /v2/top-headlines?country=gb&apiKey=86a97a39f14a4a1eac894868d7b9726c HTTP/1.1" 200 11425
+2019-11-19 11:27:14,923 - INFO - 127.0.0.1 - - [19/Nov/2019 11:27:14] "GET / HTTP/1.1" 200 -
+2019-11-19 11:27:45,261 - DEBUG - Smart alarm clock refreshed.
+2019-11-19 11:27:45,265 - DEBUG - Starting new HTTPS connection (1): api.openweathermap.org:443
+2019-11-19 11:27:45,365 - DEBUG - https://api.openweathermap.org:443 "GET /data/2.5/weather?q=exeter&appid=8bb8c8c3507631f11bb9599e7795a718&units=metric HTTP/1.1" 200 440
+2019-11-19 11:27:45,373 - DEBUG - Starting new HTTPS connection (1): newsapi.org:443
+2019-11-19 11:27:45,871 - DEBUG - https://newsapi.org:443 "GET /v2/top-headlines?country=gb&apiKey=86a97a39f14a4a1eac894868d7b9726c HTTP/1.1" 200 11425
+2019-11-19 11:27:45,875 - INFO - 127.0.0.1 - - [19/Nov/2019 11:27:45] "GET / HTTP/1.1" 200 -
+2019-11-19 11:27:47,266 - INFO -  * Detected change in 'C:\\Users\\isaac\\OneDrive\\Documents\\University\\Computer Science\\Programming\\Coursework\\smart-alarm-clock\\smart_alarm.py', reloading
+2019-11-19 11:36:38,073 - DEBUG - Smart alarm clock refreshed.
+2019-11-19 11:36:38,081 - DEBUG - Starting new HTTPS connection (1): api.openweathermap.org:443
+2019-11-19 11:36:38,253 - DEBUG - https://api.openweathermap.org:443 "GET /data/2.5/weather?q=exeter&appid=8bb8c8c3507631f11bb9599e7795a718&units=metric HTTP/1.1" 200 440
+2019-11-19 11:36:38,265 - DEBUG - Starting new HTTPS connection (1): newsapi.org:443
+2019-11-19 11:36:38,764 - DEBUG - https://newsapi.org:443 "GET /v2/top-headlines?country=gb&apiKey=86a97a39f14a4a1eac894868d7b9726c HTTP/1.1" 200 11425
+2019-11-19 11:36:38,780 - INFO - 127.0.0.1 - - [19/Nov/2019 11:36:38] "GET / HTTP/1.1" 200 -
+2019-11-19 11:36:44,492 - INFO -  * Detected change in 'C:\\Users\\isaac\\OneDrive\\Documents\\University\\Computer Science\\Programming\\Coursework\\smart-alarm-clock\\smart_alarm.py', reloading
