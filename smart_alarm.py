@@ -9,8 +9,8 @@ repeat every day), and cancel these alarms if they change their mind.
 import json
 import logging
 import sched
-import time
 from datetime import datetime
+from time import localtime, mktime, sleep, strftime, strptime, time
 
 import pyttsx3
 import requests
@@ -25,7 +25,7 @@ old_temp = ""
 
 # Initialises Flask for web interface and the scheduler for the alarm.
 app = Flask(__name__)
-alarm = sched.scheduler(time.time, time.sleep)
+alarm = sched.scheduler(time, sleep)
 
 
 @app.route("/")
@@ -255,8 +255,8 @@ def get_alarm_inputs():
     # Checks if the user has input an alarm to set.
     if alarm_time:
         # Converts from input box time format to epoch time format.
-        format_time = time.strptime(alarm_time, "%Y-%m-%dT%H:%M")
-        format_time = time.mktime(format_time)
+        format_time = strptime(alarm_time, "%Y-%m-%dT%H:%M")
+        format_time = mktime(format_time)
 
         # Schedules the alarm if there's an alarm input.
         set_alarm(alarm_time, alarm_label, alarm_repeat, format_time)
@@ -328,13 +328,12 @@ def alert_alarm(alarm_time: str, alarm_label: str, alarm_repeat: str) -> list:
     # Repeats the alarm for the next day if repeating alarm option is set.
     if alarm_repeat:
         # Converts alarm time to epoch time and adds an extra day.
-        format_time = time.strptime(alarm_time, "%Y-%m-%dT%H:%M")
-        format_time = time.mktime(format_time)
-        format_time += 86400
+        format_time = strptime(alarm_time, "%Y-%m-%dT%H:%M")
+        format_time = mktime(format_time)
+        format_time += 60
 
         # Converts back from epoch time to datetime.
-        alarm_time = time.strftime(
-            "%Y-%m-%dT%H:%M", time.localtime(format_time))
+        alarm_time = strftime("%Y-%m-%dT%H:%M", localtime(format_time))
 
         # Sets the alarm for the same time the next day.
         set_alarm(alarm_time, alarm_label, alarm_repeat, format_time)
@@ -351,8 +350,8 @@ def cancel_alarm(alarm_cancel: str):
     """
 
     # Cancels the inputted alarm from the queue and removes it from list.
-    alarm_cancel_epoch = time.strptime(alarm_cancel, "%Y-%m-%dT%H:%M")
-    alarm_cancel_epoch = time.mktime(alarm_cancel_epoch)
+    alarm_cancel_epoch = strptime(alarm_cancel, "%Y-%m-%dT%H:%M")
+    alarm_cancel_epoch = mktime(alarm_cancel_epoch)
     for event in alarm.queue:
         epoch = event[0]
         if epoch == alarm_cancel_epoch:
