@@ -362,4 +362,4 @@ def cancel_alarm(alarm_cancel: str):
 
 # Prevents the code from executing when the script is imported as a module.
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)
