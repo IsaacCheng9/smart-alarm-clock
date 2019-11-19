@@ -330,7 +330,7 @@ def alert_alarm(alarm_time: str, alarm_label: str, alarm_repeat: str) -> list:
         # Converts alarm time to epoch time and adds an extra day.
         format_time = strptime(alarm_time, "%Y-%m-%dT%H:%M")
         format_time = mktime(format_time)
-        format_time += 60
+        format_time += 86400
 
         # Converts back from epoch time to datetime.
         alarm_time = strftime("%Y-%m-%dT%H:%M", localtime(format_time))
