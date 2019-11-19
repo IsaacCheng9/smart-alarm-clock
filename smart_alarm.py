@@ -95,7 +95,7 @@ def setup_logging(file_paths: dict):
     # Starts the logging system.
     logging.basicConfig(filename=log_file, level=logging.DEBUG,
                         format="%(asctime)s - %(levelname)s - %(message)s")
-    logging.debug("Smart alarm clock started.")
+    logging.debug("Smart alarm clock refreshed.")
 
 
 def last_updated() -> datetime:
