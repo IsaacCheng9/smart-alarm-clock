@@ -13,8 +13,8 @@ from sched import scheduler
 from time import localtime, mktime, sleep, strftime, strptime, time
 
 import pyttsx3
-import requests
 from flask import Flask, render_template, request
+from requests import get
 
 upcoming_alarms = []
 news_notifications = []
@@ -168,7 +168,7 @@ def get_weather(api_keys: dict, location: dict) -> str:
                    "q={}&appid={}&units=metric").format(city, weather_key)
 
     # Gets weather data using the weather API.
-    raw_weather = requests.get(weather_api)
+    raw_weather = get(weather_api)
     weather = raw_weather.json()
     forecast = weather["weather"][0]["main"]
     temp = str(weather["main"]["temp"])
@@ -218,7 +218,7 @@ def get_news(api_keys: dict, location: dict) -> list:
                 "country={}&apiKey={}").format(country, news_key)
 
     # Gets news using the news API.
-    raw_news = requests.get(news_api)
+    raw_news = get(news_api)
     news = raw_news.json()
 
     # Gets and appends top ten headlines to the list of headlines.
