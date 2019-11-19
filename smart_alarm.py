@@ -8,8 +8,8 @@ repeat every day), and cancel these alarms if they change their mind.
 
 import json
 import logging
-import sched
 from datetime import datetime
+from sched import scheduler
 from time import localtime, mktime, sleep, strftime, strptime, time
 
 import pyttsx3
@@ -25,7 +25,7 @@ old_temp = ""
 
 # Initialises Flask for web interface and the scheduler for the alarm.
 app = Flask(__name__)
-alarm = sched.scheduler(time, sleep)
+alarm = scheduler(time, sleep)
 
 
 @app.route("/")
