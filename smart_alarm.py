@@ -51,13 +51,19 @@ def main() -> str:
     get_alarm_inputs()
 
     # Returns the variables to the HTML file to render webpage.
-    return render_template("home.html", current_datetime=current_datetime,
-                           weather_notifications=weather_notifications,
-                           news_notifications=news_notifications,
-                           forecast=forecast, temp=temp,
-                           max_temp=max_temp, min_temp=min_temp, wind=wind,
-                           headlines=headlines,
-                           upcoming_alarms=upcoming_alarms)
+    return render_template(
+        "home.html",
+        current_datetime=current_datetime,
+        weather_notifications=weather_notifications,
+        news_notifications=news_notifications,
+        forecast=forecast,
+        temp=temp,
+        max_temp=max_temp,
+        min_temp=min_temp,
+        wind=wind,
+        headlines=headlines,
+        upcoming_alarms=upcoming_alarms,
+    )
 
 
 def parse_configs() -> dict:
@@ -93,8 +99,11 @@ def setup_logging(file_paths: dict):
     log_file = file_paths["logging"]
 
     # Starts the logging system.
-    logging.basicConfig(filename=log_file, level=logging.DEBUG,
-                        format="%(asctime)s - %(levelname)s - %(message)s")
+    logging.basicConfig(
+        filename=log_file,
+        level=logging.DEBUG,
+        format="%(asctime)s - %(levelname)s - %(message)s",
+    )
     logging.debug("Smart alarm clock refreshed.")
 
 
@@ -107,8 +116,7 @@ def last_updated() -> datetime:
     """
 
     # Gets the current datetime to show when the webpage was last updated.
-    current_datetime = datetime.now().strftime(
-        "%Y-%m-%d %H:%M:%S")
+    current_datetime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     print("Last Updated:\n    ", current_datetime)
 
     return current_datetime
@@ -131,8 +139,9 @@ def get_notifications(notification_type: str, new_notification: str) -> list:
     """
 
     # Adds a timestamp to new notifications.
-    notification_input = (datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ": "
-                          + new_notification)
+    notification_input = (
+        datetime.now().strftime("%Y-%m-%d %H:%M:%S") + ": " + new_notification
+    )
 
     # Adds notification to the relevant notification category list.
     if notification_type == "News":
@@ -164,8 +173,9 @@ def get_weather(api_keys: dict, location: dict) -> str:
     # Gets the API for weather data on user's city.
     weather_key = api_keys["weather"]
     city = location["city"]
-    weather_api = ("https://api.openweathermap.org/data/2.5/weather?"
-                   "q={}&appid={}&units=metric").format(city, weather_key)
+    weather_api = (
+        "https://api.openweathermap.org/data/2.5/weather?" "q={}&appid={}&units=metric"
+    ).format(city, weather_key)
 
     # Gets weather data using the weather API.
     raw_weather = get(weather_api)
@@ -179,12 +189,11 @@ def get_weather(api_keys: dict, location: dict) -> str:
     # Adds notification if forecast or temperature changes, stating the change.
     if forecast != old_forecast:
         new_forecast = (
-            "The weather forecast has changed. It is now " + forecast.lower()
-            + ".")
+            "The weather forecast has changed. It is now " + forecast.lower() + "."
+        )
         get_notifications("Weather", new_forecast)
     if temp != old_temp:
-        new_temp = ("The current temperature has changed. It is now " +
-                    temp + "°C.")
+        new_temp = "The current temperature has changed. It is now " + temp + "°C."
         get_notifications("Weather", new_temp)
 
     # Sets forecast and temperature as old values to check for changes.
@@ -214,8 +223,9 @@ def get_news(api_keys: dict, location: dict) -> list:
     # Gets latest news using the news API.
     news_key = api_keys["news"]
     country = location["country"]
-    news_api = ("https://newsapi.org/v2/top-headlines?"
-                "country={}&apiKey={}").format(country, news_key)
+    news_api = ("https://newsapi.org/v2/top-headlines?" "country={}&apiKey={}").format(
+        country, news_key
+    )
 
     # Gets news using the news API.
     raw_news = get(news_api)
@@ -229,7 +239,7 @@ def get_news(api_keys: dict, location: dict) -> list:
     # Adds notification that news was updated, specifying the new headline.
     for headline in headlines:
         if headline not in old_headlines:
-            new_headline = ("A new headline has been added: " + headline)
+            new_headline = "A new headline has been added: " + headline
             get_notifications("News", new_headline)
 
     # Adds the headlines to the old headlines list to check for new headlines.
@@ -266,8 +276,9 @@ def get_alarm_inputs():
         cancel_alarm(alarm_cancel)
 
 
-def set_alarm(alarm_time: str, alarm_label: str, alarm_repeat: str,
-              format_time: float) -> list:
+def set_alarm(
+    alarm_time: str, alarm_label: str, alarm_repeat: str, format_time: float
+) -> list:
     """
     Sets a new alarm according to the inputs of the user.
 
@@ -284,16 +295,24 @@ def set_alarm(alarm_time: str, alarm_label: str, alarm_repeat: str,
     global upcoming_alarms
 
     # Activates new alarm to alert at given time.
-    alarm.enterabs(format_time, 1, alert_alarm, argument=(alarm_time,
-                                                          alarm_label,
-                                                          alarm_repeat,))
+    alarm.enterabs(
+        format_time,
+        1,
+        alert_alarm,
+        argument=(
+            alarm_time,
+            alarm_label,
+            alarm_repeat,
+        ),
+    )
 
     # Combines the alarm time and the alarm label for display.
     if alarm_repeat:
-        alarm_input = (alarm_time.replace("T", " ") + " " + alarm_label +
-                       " (" + alarm_repeat + ")")
+        alarm_input = (
+            alarm_time.replace("T", " ") + " " + alarm_label + " (" + alarm_repeat + ")"
+        )
     else:
-        alarm_input = (alarm_time.replace("T", " ") + " " + alarm_label)
+        alarm_input = alarm_time.replace("T", " ") + " " + alarm_label
 
     # Adds alarm to the list of alarms and sorts them chronologically.
     upcoming_alarms.append(alarm_input)

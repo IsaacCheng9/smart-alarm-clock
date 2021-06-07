@@ -1,7 +1,6 @@
 import unittest
 
-from smart_alarm import (cancel_alarm, get_news, last_updated, parse_configs,
-                         set_alarm)
+from smart_alarm import cancel_alarm, get_news, last_updated, parse_configs, set_alarm
 
 
 class TestParseConfigs(unittest.TestCase):
