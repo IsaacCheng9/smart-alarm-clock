@@ -1,60 +1,61 @@
 <!DOCTYPE html>
 <html>
+  <meta http-equiv="refresh" content="30;url='/'" />
 
-<meta http-equiv="refresh" content="30;url='/'">
-
-<head>
+  <head>
     <title>Smart Alarm Clock</title>
-</head>
+  </head>
 
-<h1>Smart Alarm Clock</h1>
+  <h1>Smart Alarm Clock</h1>
 
-<body>Last Updated: {{ current_datetime }}</body>
+  <body>
+    Last Updated: {{ current_datetime }}
+  </body>
 
-<h3>Weather Notifications</h3>
-{% for weather_notification in weather_notifications %}
-{{ weather_notification }}
-<br>
-{% endfor %}
+  <h3>Weather Notifications</h3>
+  {% for weather_notification in weather_notifications %} {{
+  weather_notification }}
+  <br />
+  {% endfor %}
 
-<h3>News Notifications</h3>
-{% for news_notification in news_notifications %}
-{{ news_notification }}
-<br>
-{% endfor %}
+  <h3>News Notifications</h3>
+  {% for news_notification in news_notifications %} {{ news_notification }}
+  <br />
+  {% endfor %}
 
-<h3>Current Weather</h3>
-<p>
+  <h3>Current Weather</h3>
+  <p>
     {{ forecast }} with an average temperature of {{ temp }} °C.
-    <br>
+    <br />
     Highs of {{max_temp }} °C and lows of {{ min_temp}} °C.
-    <br>
+    <br />
     Wind speeds of {{ wind }} m/s.
-</p>
+  </p>
 
-<h3>Headlines for Today</h3>
-{% for headline in headlines %}
-{{ headline }}
-<br>
-{% endfor %}
+  <h3>Headlines for Today</h3>
+  {% for headline in headlines %} {{ headline }}
+  <br />
+  {% endfor %}
 
-<h3>Upcoming Alarms</h3>
-{% for alarm in upcoming_alarms %}
-{{ alarm }}
-<br>
-{% endfor %}
+  <h3>Upcoming Alarms</h3>
+  {% for alarm in upcoming_alarms %} {{ alarm }}
+  <br />
+  {% endfor %}
 
-<h3>Set an Alarm</h3>
-<form action="/" method="get">
-    Alarm Date and Time: <input type="datetime-local" name="alarm">
-    <br>
-    Alarm Label: <input type="text" name="alarm_label">
-    <br>
-    Repeat Daily: <input type="checkbox" name="alarm_repeat" value="repeating">
-    <input type="submit">
-</form>
+  <h3>Set an Alarm</h3>
+  <form action="/" method="get">
+    Alarm Date and Time: <input type="datetime-local" name="alarm" />
+    <br />
+    Alarm Label: <input type="text" name="alarm_label" />
+    <br />
+    Repeat Daily:
+    <input type="checkbox" name="alarm_repeat" value="repeating" />
+    <input type="submit" />
+  </form>
 
-<h3>Cancel an Alarm</h3>
-<form action="/" method="get">
-    <input type="datetime-local" name="cancel_alarm">
-    <input type="submit">
+  <h3>Cancel an Alarm</h3>
+  <form action="/" method="get">
+    <input type="datetime-local" name="cancel_alarm" />
+    <input type="submit" />
+  </form>
+</html>
